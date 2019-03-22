@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import json
-import cPickle
+import _pickle as cPickle
 import numpy as np
 import utils
 import h5py

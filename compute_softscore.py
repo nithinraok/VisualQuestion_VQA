@@ -4,7 +4,7 @@ import sys
 import json
 import numpy as np
 import re
-import cPickle
+import _pickle as cPickle
 
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dataset_vqa import Dictionary
