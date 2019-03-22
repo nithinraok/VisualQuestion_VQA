@@ -5,7 +5,7 @@ import json
 import numpy as np
 import re
 import _pickle as cPickle
-
+#import cPickle
 #sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dataset_vqa import Dictionary
 import utils
@@ -142,7 +142,7 @@ def filter_answers(answers_dset, min_occurence):
         if gtruth not in occurence:
             occurence[gtruth] = set()
         occurence[gtruth].add(ans_entry['question_id'])
-    for answer in occurence.keys():
+    for answer in list(occurence):
         if len(occurence[answer]) < min_occurence:
             occurence.pop(answer)
 
