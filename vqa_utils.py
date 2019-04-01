@@ -76,9 +76,15 @@ def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames
 
 
 if __name__ == "__main__":
-    dataroot="/data/digbose92/VQA/questions_answers"
+    user="digbose92"
+    if user=="nithin_rao":
+        root_folder = "/Users/nithin_rao/MyFiles/MS/USC/Spring_2019/CSCI_599_DL/Project/VisualQuestion_VQA/"
+    else:
+        root_folder = "/data/digbose92"
+        
+    dataroot=root_folder+"/VQA/questions_answers"
     pkl_file='dictionary.pkl'
-    glove_filename="/data/digbose92/VQA/glove_dataset/data/glove/glove.6B.300d.txt"
+    glove_filename=root_folder+"/VQA/glove_dataset/data/glove/glove.6B.300d.txt"
 
     train_questions_filenames=os.path.join(dataroot,"v2_OpenEnded_mscoco_train2014_questions.json")
     train_answer_filenames=os.path.join(dataroot,"v2_mscoco_train2014_annotations.json")
