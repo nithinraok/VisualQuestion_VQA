@@ -56,6 +56,7 @@ class EncoderLSTM(nn.Module):
         
         input = self.embed(input_sentence).view(self.timesteps,self.batch_size,-1)
         lstm_out, hidden_fin = self.lstm(input, self.hidden)
+        print(hidden_fin[0][-1].size())
         linear_scores=self.linear(hidden_fin[0][-1])
         act_vals=torch.tanh(linear_scores)
         return(act_vals)
@@ -108,5 +109,4 @@ if __name__ == "__main__":
         fuse_test=fuse_test.to(device)
         class_op=fuse_test(encoder_ops,test_image_tensor)
         print(class_op.size())
-
-
+        
