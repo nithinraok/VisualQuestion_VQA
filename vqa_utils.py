@@ -95,7 +95,7 @@ if __name__ == "__main__":
     
     image_filenames_dict={'train_data_file':'data/train36.hdf5','val_data_file':'data/val36.hdf5',
                             'train_ids_file':'data/train_ids.pkl','val_ids_file':'data/val_ids.pkl',
-                            'infile':root_folder+"/VQA/image_features/data/trainval_36/trainval_resnet101_faster_rcnn_genome_36.tsv',
+                            'infile':root_folder+'/VQA/image_features/data/trainval_36/trainval_resnet101_faster_rcnn_genome_36.tsv',
                             'train_indices_file':'data/train36_imgid2idx.pkl','val_indices_file':'data/val36_imgid2idx.pkl'}
     main_run(dataroot,pkl_file,glove_filename,filenames_dict,image_filenames_dict)
 
