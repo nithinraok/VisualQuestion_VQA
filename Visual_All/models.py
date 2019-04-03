@@ -34,7 +34,6 @@ class EncoderLSTM(nn.Module):
         self.linear_fc_size=fc_size
         self.nlayers=num_layers
         self.timesteps=max_seq_length
-
         self.embed , self.vocab_len , self.embed_len = create_embedding_layer(weights_matrix,non_trainable=train_embed) 
         self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers,dropout=dropout_rate)
         self.linear = nn.Linear(self.hidden_dim, self.linear_fc_size)
@@ -55,7 +54,7 @@ class EncoderLSTM(nn.Module):
         """Forward pass of the encoderLSTM network
         """
         
-        input = self.embed(input_sentence).view(self.timesteps,self.batch_size,-1)
+        input = self.embed(input_sentence).view(self.timesteps,self.batch_size,self.embed_len)
         lstm_out, hidden_fin = self.lstm(input, self.hidden)
         #print(hidden_fin[0][-1].size())
         linear_scores=self.linear(hidden_fin[0][-1])
@@ -64,20 +63,26 @@ class EncoderLSTM(nn.Module):
         return(act_vals)
 
 class FusionModule(nn.Module):
-    def __init__(self,fuse_embed_size=2048,fc_size=1024,class_size=3125,dropout_rate=0.5):
+    def __init__(self,fuse_embed_size=2048,input_fc_size=1024,fc_size=1024,class_size=3129,dropout_rate=0.5):
         """Module for fusing the mean pooled image features and lstm hidden states
         """
         super(FusionModule, self).__init__()
         self.fuse_size=fuse_embed_size
         self.num_classes=class_size
         self.fc_size=fc_size
-        self.embed_layer=nn.Linear(self.fuse_size,self.fc_size)
+        self.input_fc_size=input_fc_size
+        self.input_embed=nn.Linear(self.fuse_size,self.input_fc_size)
+        self.embed_layer=nn.Linear(self.input_fc_size,self.fc_size)
         self.class_layer=nn.Linear(self.fc_size,self.num_classes)
         self.dropout=nn.Dropout(dropout_rate)
+        
 
     def forward(self,encoder_hidden_states, image_features):
         """Forward pass of the Fusion module
         """
+        #adding one initial Linear operation
+        image_features=self.input_embed(image_features)
+        image_features=torch.tanh(image_features)
         fuse_embed=encoder_hidden_states*image_features
         fuse_embed=self.dropout(fuse_embed)
         lin_op=self.embed_layer(fuse_embed)
