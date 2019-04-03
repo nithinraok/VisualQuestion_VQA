@@ -4,6 +4,7 @@ import numpy as np
 from dataset_vqa import Dictionary 
 from compute_softscore import *
 from image_feature_extractor import * 
+from utils import get_question_imgid,get_questionid_question,get_imageid_path
 
 def create_dictionary(dataroot):
     """Creates a dictionary object for future usage
@@ -68,7 +69,12 @@ def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames
 
 
     #image feature extraction here based on functions in image_feature_extractor
-    # image_feats_converter(image_filenames_dict)
+    image_feats_converter(image_filenames_dict)
+    get_question_imgid('data/','train')
+    get_question_imgid('data/','val')
+    get_questionid_question('data/')
+    get_imageid_path("data/train2017/",'train')
+    get_imageid_path("data/val2017/",'val')
 
 
 

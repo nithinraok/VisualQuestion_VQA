@@ -6,7 +6,8 @@ import numpy as np
 from PIL import Image
 import torch
 import torch.nn as nn
-
+import pickle
+import json
 
 EPS = 1e-7
 
@@ -36,6 +37,18 @@ def load_imageid(folder):
         img_ids.add(img_id)
     return img_ids
 
+def get_imageid_path(folder,name):
+    images = load_folder(folder, 'png')
+    imgid_path={}
+    img_ids = set()
+    for img in images:
+        img_id = int(img.split('/')[-1].split('.')[0].split('_')[-1])
+        img_ids.add(img_id)
+        imgid_path[img_id]=img
+    print("saving img id to path")
+
+    pickle.dump(imgid_path,open('data/'+name+'_imgid_path.pkl','wb'))
+    # return img_ids
 
 def pil_loader(path):
     with open(path, 'rb') as f:
@@ -98,3 +111,48 @@ class Logger(object):
         self.log_file.write(msg + '\n')
         self.log_file.flush()
         print(msg)
+
+def get_question_imgid(dataroot,name):
+    filename = dataroot+'/cache/{}_target.pkl'.format(name)
+    train_target = pickle.load(open(filename,'rb'))
+
+    question_imgid={}
+    question_label={}
+    for item in train_target:
+        q_id = item['question_id']
+        i_id = item['image_id']
+        question_imgid[q_id]=i_id
+
+        id=np.argmax(item['scores'])
+
+        lab_id=item['labels'][id]
+        question_label[q_id]=lab_id
+
+    print("Saving question image id and label id")
+    savefile_img=dataroot+'/{}_question_imgid.pkl'.format(name)
+    savefile_lab=dataroot+'/{}_question_labid.pkl'.format(name)
+    pickle.dump(question_imgid, open(savefile_img, 'wb'))
+    pickle.dump(question_label, open(savefile_lab, 'wb'))
+
+def get_questionid_question(dataroot):
+
+    train_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_train2014_questions.json'))['questions']
+    val_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_val2014_questions.json'))['questions']
+
+    val_questionid_question={}
+    for item in val_question:
+        q_id = item['question_id']
+        ques = item['question']
+        val_questionid_question[q_id]=ques
+
+    print("Saving question id to question pickle")
+    pickle.dump(val_questionid_question, open(dataroot+'/val_questionid_question.pkl', 'wb'))
+
+    train_questionid_question={}
+    for item in train_question:
+        q_id = item['question_id']
+        ques = item['question']
+        train_questionid_question[q_id]=ques
+
+    print("Saving question id to question pickle")
+    pickle.dump(train_questionid_question, open(dataroot+'/train_questionid_question.pkl', 'wb'))
