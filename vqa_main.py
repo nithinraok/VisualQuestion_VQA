@@ -65,6 +65,9 @@ def main(args):
     fusion_network=FusionModule(fuse_embed_size=args.q_embed,fc_size=args.fuse_embed,class_size=args.num_class).to(device)
 
     print(question_encoder)
+    print(fusion_network)
+    input()
+    
 
     #Dataloader initialization
     train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=1)
@@ -77,7 +80,7 @@ def main(args):
 
     # Train the models
     total_step = len(train_loader)
-
+    step=0
     #Training starts
     for epoch in range(args.epochs):
         for i, (image_features,spatials,question_tokens,labels) in enumerate(train_loader):
@@ -91,18 +94,21 @@ def main(args):
             question_array=preproc_question_tokens(question_tokens.cpu().numpy())
             question_tokens=torch.from_numpy(question_array).to(device)
             
+            #fusion_network.zero_grad()
+            optimizer.zero_grad()
             #Forward, Backward and Optimize
             question_features=question_encoder(question_tokens)
             class_outputs=fusion_network(question_features,image_feats)
 
             loss = criterion(class_outputs, class_indices)
-            question_encoder.zero_grad()
-            fusion_network.zero_grad()
+            #question_encoder.zero_grad()
             loss.backward()
             optimizer.step()
-
-            print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+            if(step%1000==0):
+            #optimizer.zero_grad()
+                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, i, total_step, loss.item())) 
+            step=step+1
     
 
 
@@ -120,7 +126,7 @@ if __name__ == "__main__":
     parser.add_argument('--q_embed',type=int, default=2048, help='embedding output of the encoder RNN')
     parser.add_argument('--fuse_embed',type=int, default=1024, help='Overall embedding size of the fused network')
     parser.add_argument('--num_class',type=int, default=3129, help='Number of output classes')
-    parser.add_argument('--learning_rate',type=float,default=0.001,help='Learning rate')
+    parser.add_argument('--learning_rate',type=float,default=0.01,help='Learning rate')
     args = parser.parse_args()
     main(args)
 
