@@ -2,10 +2,14 @@ import torch
 import torchvision.transforms as transforms
 import json
 import _pickle as cPickle
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 import os
 import utils
 from PIL import Image
+from dataset_vqa import Dictionary, VQAFeatureDataset
+import glob
+import numpy as np
+
 
 def _create_entry(img, question, answer):
     answer.pop('image_id')
@@ -48,14 +52,16 @@ class VQADataset(Dataset):
     """VQADataset which returns a tuple of image, question tokens and the answer label
     """
 
-    def __init__(self,image_root_dir,dictionary,dataroot,json_root_dir,choice='train',transforms=None):
+    def __init__(self,image_root_dir,dictionary,dataroot,filename_len=12,choice='train',transform_set=None):
 
         #initializations
         self.img_root=image_root_dir
         self.data_root=dataroot
         self.img_dir=os.path.join(image_root_dir,choice+"2014")
+        #print(os.path.exists(self.img_dir))
         self.choice=choice
-        self.transform=transforms
+        self.transform=transform_set
+        self.filename_len=filename_len
 
         ans2label_path = os.path.join(dataroot, 'cache', 'trainval_ans2label.pkl')
         label2ans_path = os.path.join(dataroot, 'cache', 'trainval_label2ans.pkl')
@@ -69,6 +75,7 @@ class VQADataset(Dataset):
         self.dictionary=dictionary
 
         self.entries = _load_dataset(dataroot, choice, self.img_id2idx)
+        self.tokenize()
         #self.entry_list=cPickle.load(open(id_map_path, 'rb'))
     
     def tokenize(self, max_length=14):
@@ -87,27 +94,33 @@ class VQADataset(Dataset):
             utils.assert_eq(len(tokens), max_length)
             entry['q_token'] = tokens
 
+
+
     def __getitem__(self,index):
         entry=self.entries[index]
         #filtering of the labels based on the score
         question=entry['q_token']
         answer_data=entry['answer']
         max_id=answer_data['scores'].index(max(answer_data['scores'])) #finding the maximum score index
-        label=answer_data['labels'][max_id]
+        label=int(answer_data['labels'][max_id])
         image_id=entry['image_id']
-        image_path='COCO_'+self.choice+'2014_'+'000000'+image_id+'.jpg'
-        try:
-            image=Image.open(os.path.join(self.img_dir,image_path)).convert('RGB')
+        
+        
+        filename='COCO_'+self.choice+'2014_'+str(image_id).zfill(self.filename_len)+'.jpg'
+
+        if(len(filename)>0):
+            #print(filename[0])
+            im=Image.open(os.path.join(self.img_dir,filename))
+            im=im.convert('RGB')
+            print(im.mode)
             if(self.transform is not None):
-                image=self.transform(image)
-        except:
-            print('Image path not found')
-
-        #tensorize everything and return the tensors
-        label=torch.LongTensor(label)
-        question=torch.LongTensor(question)
-
-        return(image,question,label)
+                image=self.transform(im)
+            question=torch.from_numpy(np.array(question))
+            return(image,question,label)
+        else:
+            print(filename)
+            print('Filepath not found')
+            
 
 
     def __len__(self):
@@ -116,6 +129,14 @@ class VQADataset(Dataset):
 
 if __name__ == "__main__":
     image_root_dir="/data/digbose92/VQA/COCO"
-    
+    dictionary = Dictionary.load_from_file('data/dictionary.pkl')
+    dataroot='/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data'
 
+    transform_list=transforms.Compose([transforms.Resize((224,224)),transforms.ToTensor()])
+    train_dataset=VQADataset(image_root_dir=image_root_dir,dictionary=dictionary,dataroot=dataroot,transform_set=transform_list)
+    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, num_workers=1)
+    for i, (image,question,label) in enumerate(train_loader):
+        print(image.size())
+        print(question.size())
+        print(label)
 
