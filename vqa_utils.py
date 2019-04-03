@@ -76,9 +76,9 @@ def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames
 
 
 if __name__ == "__main__":
-    user="digbose92"
+    user="nithin_rao"
     if user=="nithin_rao":
-        root_folder = "/Users/nithin_rao/MyFiles/MS/USC/Spring_2019/CSCI_599_DL/Project/VisualQuestion_VQA/"
+        root_folder = "/Users/nithin_rao/MyFiles/MS/USC/Spring_2019/CSCI_599_DL/Project/"
     else:
         root_folder = "/data/digbose92"
         
@@ -90,9 +90,13 @@ if __name__ == "__main__":
     train_answer_filenames=os.path.join(dataroot,"v2_mscoco_train2014_annotations.json")
     val_questions_filenames=os.path.join(dataroot,"v2_OpenEnded_mscoco_val2014_questions.json")
     val_answer_filenames=os.path.join(dataroot,"v2_mscoco_val2014_annotations.json")
-    filenames_dict={'train_question_file':train_questions_filenames,'train_answer_file':train_answer_filenames,'validation_question_file':val_questions_filenames,'validation_answer_file':val_answer_filenames}
+    filenames_dict={'train_question_file':train_questions_filenames,'train_answer_file':train_answer_filenames,
+                    'validation_question_file':val_questions_filenames,'validation_answer_file':val_answer_filenames}
     
-    image_filenames_dict={'train_data_file':'data/train36.hdf5','val_data_file':'data/val36.hdf5','train_ids_file':'data/train_ids.pkl','val_ids_file':'data/val_ids.pkl','infile':'/data/digbose92/VQA/image_features/data/trainval_36/trainval_resnet101_faster_rcnn_genome_36.tsv','train_indices_file':'data/train36_imgid2idx.pkl','val_indices_file':'data/val36_imgid2idx.pkl'}
+    image_filenames_dict={'train_data_file':'data/train36.hdf5','val_data_file':'data/val36.hdf5',
+                            'train_ids_file':'data/train_ids.pkl','val_ids_file':'data/val_ids.pkl',
+                            'infile':root_folder+'/VQA/image_features/data/trainval_36/trainval_resnet101_faster_rcnn_genome_36.tsv',
+                            'train_indices_file':'data/train36_imgid2idx.pkl','val_indices_file':'data/val36_imgid2idx.pkl'}
     main_run(dataroot,pkl_file,glove_filename,filenames_dict,image_filenames_dict)
 
     
