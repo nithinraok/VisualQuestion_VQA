@@ -84,10 +84,10 @@ def main(args):
             class_outputs=fusion_network(question_features,image_feats)
 
             loss = criterion(class_outputs, target)
-    
             loss.backward()
             optimizer.step()
 
+            # if(step%20)
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, i, total_step, loss.item())) 
     
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     #parser.add_argument('--model', type=str, default='baseline0_newatt')
     parser.add_argument('--file_name', type=str, default="data/glove6b_init_300d.npy")
     parser.add_argument('--output', type=str, default='saved_models')
-    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--max_sequence_length', type=int, default=14)
     parser.add_argument('--seed', type=int, default=1111, help='random seed')
     parser.add_argument('--q_embed',type=int, default=1024, help='embedding output of the encoder RNN')
