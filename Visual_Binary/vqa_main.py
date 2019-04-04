@@ -91,9 +91,9 @@ def main(args):
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, i, total_step, loss.item())) 
          
-         savemodel(image_model,device,"image_model")
-         savemodel(question_encoder,device,"question_encoder")
-         savemodel(fusion_network,device,"fusion_network")
+        savemodel(image_model,device,"image_model")
+        savemodel(question_encoder,device,"question_encoder")
+        savemodel(fusion_network,device,"fusion_network")
 
 
 
