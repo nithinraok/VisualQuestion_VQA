@@ -8,7 +8,7 @@ from torchvision import models,transforms
 import numpy as np
 
 from dataset_vqa_binary import Dictionary, VQAFeatureDataset
-from models import EncoderLSTM, FusionModule,LinearImageModel,Vgg16_4096
+from models import EncoderLSTM, FusionModule,LinearImageModel,Vgg16_4096,savemodel
 
 def main(args):
 
@@ -90,7 +90,9 @@ def main(args):
             # if(step%20)
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, i, total_step, loss.item())) 
-    
+        savemodel(image_model,device,"image_model")
+        savemodel(question_encoder,device,"question_encoder")
+        savemodel(fusion_network,device,"fusion_network")
 
 
 

@@ -7,6 +7,18 @@ import torch.nn.functional as F
 from torchsummary import summary
 import numpy as np
 
+def savemodel(model,device,name):
+    model.to('cpu')
+    # model.class_to_idx = classes_labels
+    checkpoint = {'input_size': 3*224*224,
+                  'output_size': 2,
+                  'model': model,
+                  'state_dict': model.state_dict()
+                  }
+
+    torch.save(checkpoint, 'savedmodels/final_model_'+'name'+'.pth')
+    model.to(device)
+
 
 def create_embedding_layer(weights_matrix,non_trainable=False):
     """loads the weights from glove numpy array and returns the layer, embeddings and the embedding dimensions
