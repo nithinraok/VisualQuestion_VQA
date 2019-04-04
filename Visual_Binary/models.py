@@ -20,9 +20,35 @@ def create_embedding_layer(weights_matrix,non_trainable=False):
 
     return emb_layer, num_embeddings, embedding_dim
 
+class Vgg16_4096(nn.Module):
+    def __init__(self, original_model):
+        super(Vgg16_4096, self).__init__()
+        bottle1 = []
+        bottle1.append(list(original_model.children())[0])
+        bottle2 = []
+        bottle2.append(list(original_model.children())[1][:-3])
+        self.features1 = nn.Sequential(*bottle1)
+        self.features2 = nn.Sequential(*bottle2)
+        
+    def forward(self, x):
+        x = self.features1(x)
+        x = x.view(x.shape[0],-1)
+        x = self.features2(x)
+        return x
+
+class LinearImageModel(nn.Module):
+    def __init__(self,n_input=4096,n_output=1024):
+        super(LinearImageModel,self).__init__()
+
+        self.model = nn.Sequential(nn.Linear(n_input,n_output),
+                        nn.ReLU()
+                        )
+    def forward(self,x):
+        out=self.model(x)
+        return out
 
 class EncoderLSTM(nn.Module):
-    def __init__(self, hidden_size,weights_matrix,train_embed=False,use_gpu=True,fc_size=2048, num_layers=2, max_seq_length=14, batch_size=32):
+    def __init__(self, hidden_size,weights_matrix,train_embed=False,use_gpu=True,fc_size=1024, num_layers=2, max_seq_length=14, batch_size=32):
         """Module for stacked LSTM which returns a single hidden state for the input question
         """
         super(EncoderLSTM, self).__init__()
@@ -44,11 +70,11 @@ class EncoderLSTM(nn.Module):
         # first is the hidden h
         # second is the cell c
         if self.use_gpu:
-            return (Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()),
-                     Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()))
+            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()),
+                     Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()))
         else:
-            return (Variable(torch.zeros(2, self.batch_size, self.hidden_dim)),
-                Variable(torch.zeros(2, self.batch_size, self.hidden_dim)))
+            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)),
+                Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)))
 
     def forward(self, input_sentence):
         """Forward pass of the encoderLSTM network
@@ -61,7 +87,7 @@ class EncoderLSTM(nn.Module):
         return(act_vals)
 
 class FusionModule(nn.Module):
-    def __init__(self,fuse_embed_size=2048,fc_size=1024,class_size=3125):
+    def __init__(self,fuse_embed_size=1024,fc_size=512,class_size=2):
         """Module for fusing the mean pooled image features and lstm hidden states
         """
         super(FusionModule, self).__init__()

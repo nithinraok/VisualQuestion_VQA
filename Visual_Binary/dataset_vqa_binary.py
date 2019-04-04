@@ -6,6 +6,7 @@ import numpy as np
 import utils
 import h5py
 import torch
+from imageio import imread
 from torch.utils.data import Dataset
 
 
@@ -24,7 +25,7 @@ class Dictionary(object):
 
     @property
     def padding_idx(self):
-        return len(self.word2idx)
+        return len(self.word2idx)-1
 
     def tokenize(self, sentence, add_word):
         sentence = sentence.lower()
@@ -99,10 +100,11 @@ def _load_dataset(dataroot, name, img_id2val):
 
 
 class VQAFeatureDataset(Dataset):
-    def __init__(self, name, dictionary, dataroot='data'):
+    def __init__(self, name, dictionary,tfms=None, dataroot='data'):
         super(VQAFeatureDataset, self).__init__()
         assert name in ['train', 'val']
 
+        self.transforms=tfms
         ans2label_path = os.path.join(dataroot, 'cache', 'trainval_ans2label.pkl')
         label2ans_path = os.path.join(dataroot, 'cache', 'trainval_label2ans.pkl')
         self.ans2label = cPickle.load(open(ans2label_path, 'rb'))
@@ -134,23 +136,30 @@ class VQAFeatureDataset(Dataset):
         
         return tokens
 
-    def tensorize(self,ques_token,img_file,label):
+    def tensorize(self,ques_token):
         
         question = torch.from_numpy(np.array(ques_token))
-        target = torch.from_numpy(label)
+        # target = torch.from_numpy(label)
 
-        return question,target
+        return question
         
     def __getitem__(self, index):
         question_id = self.question_ids[index]
+        # print("Question ID :",question_id)
         img_id = self.questionid_imgid[question_id]
         img_file = self.imgid_path[img_id]
         target = self.questionid_labid[question_id]
         question = self.questionid_question[question_id]
 
         ques_token = self.tokenize(question)
+        ques_token = self.tensorize(ques_token)
+
+        sample = imread(img_file)[:,:,:3]
+        if self.transforms:
+            sample = self.transforms(sample)
+
         
-        return img_file, ques_token, target
+        return sample, ques_token, target
 
     def __len__(self):
         return len(self.question_ids)
