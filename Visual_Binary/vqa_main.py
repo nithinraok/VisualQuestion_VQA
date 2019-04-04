@@ -77,6 +77,7 @@ def main(args):
             # input()
             image_feats=image_Linear_feats.to(device)
             question_tokens=ques_token.to(device)
+            target=target.to(device)
 
             # #Forward, Backward and Optimize
             optimizer.zero_grad()
