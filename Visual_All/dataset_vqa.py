@@ -9,7 +9,6 @@ import h5py
 import torch
 from torch.utils.data import Dataset
 
-
 class Dictionary(object):
     def __init__(self, word2idx=None, idx2word=None):
         if word2idx is None:
@@ -25,7 +24,7 @@ class Dictionary(object):
 
     @property
     def padding_idx(self):
-        return len(self.word2idx)
+        return (len(self.word2idx)-1)
 
     def tokenize(self, sentence, add_word):
         sentence = sentence.lower()

@@ -9,7 +9,9 @@ from PIL import Image
 from dataset_vqa import Dictionary, VQAFeatureDataset
 import glob
 import numpy as np
-
+import matplotlib.pyplot as plt
+import cv2
+import torchvision.transforms.functional as F
 
 def _create_entry(img, question, answer):
     answer.pop('image_id')
@@ -51,7 +53,6 @@ def _load_dataset(dataroot, name, img_id2val):
 class VQADataset(Dataset):
     """VQADataset which returns a tuple of image, question tokens and the answer label
     """
-
     def __init__(self,image_root_dir,dictionary,dataroot,filename_len=12,choice='train',transform_set=None):
 
         #initializations
@@ -94,8 +95,6 @@ class VQADataset(Dataset):
             utils.assert_eq(len(tokens), max_length)
             entry['q_token'] = tokens
 
-
-
     def __getitem__(self,index):
         entry=self.entries[index]
         #filtering of the labels based on the score
@@ -112,7 +111,6 @@ class VQADataset(Dataset):
             #print(filename[0])
             im=Image.open(os.path.join(self.img_dir,filename))
             im=im.convert('RGB')
-            print(im.mode)
             if(self.transform is not None):
                 image=self.transform(im)
             question=torch.from_numpy(np.array(question))
@@ -121,8 +119,6 @@ class VQADataset(Dataset):
             print(filename)
             print('Filepath not found')
             
-
-
     def __len__(self):
         return(len(self.entries))
 
@@ -134,9 +130,38 @@ if __name__ == "__main__":
 
     transform_list=transforms.Compose([transforms.Resize((224,224)),transforms.ToTensor()])
     train_dataset=VQADataset(image_root_dir=image_root_dir,dictionary=dictionary,dataroot=dataroot,transform_set=transform_list)
-    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, num_workers=1)
-    for i, (image,question,label) in enumerate(train_loader):
-        print(image.size())
-        print(question.size())
-        print(label)
+    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=1)
+    image,question,label=next(iter(train_loader))
+   
+    ques_token=question.numpy()
+    lab=label.numpy()
+    #image = F.to_pil_image(image)
+    #print(image.size)
+    image_numpy=image.numpy()[0]
+   
+    quest_list_new=ques_token[0].tolist()
+    a = [x for x in quest_list_new if x != 19900]
+    
+    data=cPickle.load(open('data/dictionary.pkl','rb'))
+    answer_lab=cPickle.load(open('data/cache/trainval_label2ans.pkl','rb'))
+    index2word_map=data[1]
+    
+    word_list=[index2word_map[id] for id in a]
+    ques=','.join(word_list)
+    print(ques)
+    #print(word_list)
+    print(answer_lab[lab[0]])
+    #print(image_numpy.shape)
+    tensor2pil = transforms.ToPILImage()
+
+    b=np.transpose(image_numpy,(1,2,0))
+    b=b*255
+    b=b.astype(int)
+    print(np.max(b))
+    cv2.imwrite(ques+'.jpg',b)
+    #fig = plt.figure()
+    #title_obj = plt.title(ques)
+    #plt.imshow(b)
+    #plt.show()
+    #plt.savefig('COCO_sample.png')
 
