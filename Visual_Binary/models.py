@@ -4,7 +4,7 @@ import torchvision.models as models
 from torch.nn.utils.rnn import pack_padded_sequence
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torchsummary import summary
+#from torchsummary import summary
 import numpy as np
 
 def savemodel(model,device,name):
@@ -37,8 +37,10 @@ class Vgg16_4096(nn.Module):
         super(Vgg16_4096, self).__init__()
         bottle1 = []
         bottle1.append(list(original_model.children())[0])
+       # bottle1.extend(list(original_model.children())[1])
         bottle2 = []
-        bottle2.append(list(original_model.children())[1][:-3])
+    
+        bottle2.append(list(original_model.children())[2][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
         
