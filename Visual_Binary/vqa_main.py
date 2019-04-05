@@ -42,7 +42,7 @@ def main(args):
     image_Features_vgg = Vgg16_4096(vgg16)
 
     image_model = LinearImageModel(n_input=4096,n_output=1024)
-    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,use_gpu=False,
+    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=True,
                                 fc_size=args.q_embed,max_seq_length=args.max_sequence_length,
                                 batch_size=args.batch_size).to(device)
     fusion_network=FusionModule(fuse_embed_size=args.q_embed,fc_size=args.fuse_embed).to(device)
@@ -77,6 +77,7 @@ def main(args):
             # input()
             image_feats=image_Linear_feats.to(device)
             question_tokens=ques_token.to(device)
+            target=target.to(device)
 
             # #Forward, Backward and Optimize
             optimizer.zero_grad()
@@ -90,6 +91,7 @@ def main(args):
             # if(step%20)
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, i, total_step, loss.item())) 
+         
         savemodel(image_model,device,"image_model")
         savemodel(question_encoder,device,"question_encoder")
         savemodel(fusion_network,device,"fusion_network")

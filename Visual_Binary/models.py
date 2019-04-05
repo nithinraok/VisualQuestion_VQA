@@ -4,7 +4,7 @@ import torchvision.models as models
 from torch.nn.utils.rnn import pack_padded_sequence
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torchsummary import summary
+#from torchsummary import summary
 import numpy as np
 
 def savemodel(model,device,name):
@@ -37,8 +37,10 @@ class Vgg16_4096(nn.Module):
         super(Vgg16_4096, self).__init__()
         bottle1 = []
         bottle1.append(list(original_model.children())[0])
+       # bottle1.extend(list(original_model.children())[1])
         bottle2 = []
-        bottle2.append(list(original_model.children())[1][:-3])
+    
+        bottle2.append(list(original_model.children())[2][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
         
@@ -95,7 +97,8 @@ class EncoderLSTM(nn.Module):
         input = self.embed(input_sentence).view(self.timesteps,self.batch_size,-1)
         lstm_out, hidden_fin = self.lstm(input, self.hidden)
         linear_scores=self.linear(hidden_fin[0][-1])
-        act_vals=torch.tanh(linear_scores)
+#        act_vals=torch.tanh(linear_scores)
+        act_vals= nn.ReLU()(linear_scores)
         return(act_vals)
 
 class FusionModule(nn.Module):
@@ -117,7 +120,8 @@ class FusionModule(nn.Module):
         """
         fuse_embed=torch.mul(encoder_hidden_states,image_features)
         lin_op=self.embed_layer(fuse_embed)
-        lin_vals=torch.tanh(lin_op)
+#        lin_vals=torch.tanh(lin_op)
+        lin_vals=nn.ReLU()(lin_op)  
         class_embed=self.class_layer(lin_vals)
         class_vals=F.softmax(class_embed,dim=1)
         return(class_vals)
