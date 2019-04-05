@@ -12,6 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import torchvision.transforms.functional as F
+from models import *
+from tqdm import tqdm
 
 def _create_entry(img, question, answer):
     answer.pop('image_id')
@@ -130,10 +132,26 @@ if __name__ == "__main__":
 
     transform_list=transforms.Compose([transforms.Resize((224,224)),transforms.ToTensor()])
     train_dataset=VQADataset(image_root_dir=image_root_dir,dictionary=dictionary,dataroot=dataroot,transform_set=transform_list)
-    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=1)
+    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, num_workers=1)
     image,question,label=next(iter(train_loader))
-   
-    ques_token=question.numpy()
+
+    device=2
+    torch.cuda.set_device(device)
+    weights=np.load("data/glove6b_init_300d.npy")
+    encoder_CNN=EncoderCNN(embed_size=1024).to(device)
+    question_encoder=EncoderLSTM(hidden_size=512,weights_matrix=weights,fc_size=1024,max_seq_length=14,batch_size=8).to(device)
+    fusion_network=FusionModule(fuse_embed_size=1024,input_fc_size=1024).to(device)
+
+    print(encoder_CNN)
+    print(question_encoder)
+    print(fusion_network)
+
+    #image_feats=encoder_CNN(image)
+    #print(image_feats.size())
+
+
+
+    """ques_token=question.numpy()
     lab=label.numpy()
     #image = F.to_pil_image(image)
     #print(image.size)
@@ -163,5 +181,5 @@ if __name__ == "__main__":
     #title_obj = plt.title(ques)
     #plt.imshow(b)
     #plt.show()
-    #plt.savefig('COCO_sample.png')
+    #plt.savefig('COCO_sample.png')"""
 
