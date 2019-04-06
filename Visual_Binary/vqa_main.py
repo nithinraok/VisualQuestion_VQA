@@ -58,6 +58,7 @@ def main(args):
     total_step = len(train_loader)
 
     def evaluate_val(model,train_loader,criterion,device):
+        print("Evaluatiing Validation Loader")
         loss=0
         accuracy=0
         with torch.no_grad():
@@ -76,8 +77,8 @@ def main(args):
     for epoch in range(args.epochs):
         running_loss=0
         step=0
-    
-        _,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
+        fusion_network.to(device) 
+        loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
         print("Val Loss: {} Accuracy :{} ".format(loss,accuracy))
         for img_sample, ques_token, target in tqdm(train_loader):
             
@@ -105,7 +106,7 @@ def main(args):
             step+=1
         epoch_loss=running_loss/len(train_dataset)
         print("Train Epoch Loss: ",epoch_loss)
-        val_loss,accuracy = evaluate_val(fusion_network,val_loader,criterion,device)
+        val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
         string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
         string+='Accuracy : \n'.format(accuracy)
         logger.write(string)
