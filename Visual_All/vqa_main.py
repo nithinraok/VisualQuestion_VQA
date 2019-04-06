@@ -106,16 +106,7 @@ def main(args):
     #Training starts
     #print('Training Starting ......................')
 
-    print('Evaluating random inputs to the network')
-    y = torch.rand(32,3,224,224)
-    sent=torch.randint(low=0,high=19900,size=(32,14))
-    labels=torch.randint(low=0,high=3123,size=(32,))
-
-    y=y.to(device)
-    sent=sent.to(device)
-    labels=labels.to(device)
-
-    def evaluate_val(model,batch,criterion,device):
+    def evaluate_val(model,train_loader,criterion,device):
         loss=0
         accuracy=0
         with torch.no_grad():
@@ -128,7 +119,9 @@ def main(args):
                 accuracy+=equality.type(torch.FLoatTensor).mean()
         return loss,accuracy
 
-    
+    file_train=open('train_loss_log.txt','a+')
+    loss_save=[]
+
     for epoch in range(args.epochs):
 
         running_loss = 0.0
@@ -158,9 +151,13 @@ def main(args):
             step=step+1
         epoch_loss = running_loss / len(train_dataset)
         epoch_acc = running_corrects.double() / len(train_dataset)
-
+        loss_save.append(running_loss)
+        string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,running_loss)
+        _,accuracy = evaluate_val(fusion_network,train_loader,criterion,device)
+        string+='Accuracy : '.format(accuracy)
+        file_train.write(string)
         print('{} Loss: {:.4f} Acc: {:.4f}'.format('train', epoch_loss, epoch_acc))
-    
+    file_train.close()
 
 
 
