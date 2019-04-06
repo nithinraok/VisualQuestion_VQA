@@ -177,7 +177,8 @@ class VQAFeatureDataset(Dataset):
             target.scatter_(0, labels, scores)
 
         return features, spatials, question, target
-
+        
+        
     def __len__(self):
         return len(self.entries)
 

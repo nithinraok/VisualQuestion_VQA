@@ -12,6 +12,7 @@ from dataset_image_vqa import VQADataset
 import torchvision.transforms as transforms
 from tqdm import tqdm
 from torch.autograd import Variable
+import pdb
 
 def question_parse(token_list):
     data=pickle.load(open('data/dictionary.pkl','rb'))
@@ -76,7 +77,7 @@ def main(args):
     
     dictionary = Dictionary.load_from_file('data/dictionary.pkl')
     train_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='train',transform_set=train_transform)
-    #eval_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='val',transform_set=validate_transform)
+    # eval_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='val',transform_set=validate_transform)
     
 
     #model definition 
@@ -91,7 +92,7 @@ def main(args):
 
     #Dataloader initialization
     train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=12)
-    #eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
+    # eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -114,6 +115,19 @@ def main(args):
     sent=sent.to(device)
     labels=labels.to(device)
 
+    def evaluate_val(model,batch,criterion,device):
+        loss=0
+        accuracy=0
+        with torch.no_grad():
+            for image_sample,question_token,labels in iter(train_loader):
+                image_sample,question_token,labels = image_sample.to(device),question_token.to(device),labels.to(device)
+                output=model.forward(question_token,image_samp)
+                loss+= criterion(output,labels).item()
+                ps = torch.exp(output)
+                equality= (labels.data == ps.max(dim=1)[1])
+                accuracy+=equality.type(torch.FLoatTensor).mean()
+        return loss,accuracy
+
     
     for epoch in range(args.epochs):
 
@@ -124,7 +138,7 @@ def main(args):
             image_samp=image_samp.to(device)
             question_toks=question_toks.to(device)
             labels=labels.to(device)
-           
+            
             class_outputs=fusion_network(question_toks,image_samp)
             _, preds = torch.max(class_outputs, 1)
             loss = criterion(class_outputs, labels)
@@ -132,14 +146,15 @@ def main(args):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-
+            #print('Enter some key')
+            #input()
             # statistics
             running_loss += loss.item() * image_samp.size(0)
             running_corrects += torch.sum(preds == labels.data)
             if(step%10==0):
             #optimizer.zero_grad()
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-                      .format(epoch, args.epochs, step, total_step, loss.item()))
+                    .format(epoch, args.epochs, step, total_step, loss.item()))
             step=step+1
         epoch_loss = running_loss / len(train_dataset)
         epoch_acc = running_corrects.double() / len(train_dataset)
@@ -166,7 +181,7 @@ if __name__ == "__main__":
     parser.add_argument('--img_feats',type=int, default=1024, help='input feature size of the image space')
     parser.add_argument('--fuse_embed',type=int, default=1000, help='Overall embedding size of the fused network')
     parser.add_argument('--num_class',type=int, default=2, help='Number of output classes')
-    parser.add_argument('--learning_rate',type=float,default=0.001,help='Learning rate')
+    parser.add_argument('--learning_rate',type=float,default=0.01,help='Learning rate')
     args = parser.parse_args()
     main(args)
 

@@ -66,21 +66,23 @@ class EncoderLSTM(nn.Module):
         self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers)
         self.linear = nn.Linear(self.hidden_dim, self.linear_fc_size)
         self.dropout = nn.Dropout(dropout_rate)
-        self.hidden = self.init_hidden()
+        # self.hidden = self.init_hidden()
         
-    def init_hidden(self):
+    def init_hidden(self,batch_size):
         # first is the hidden h
         # second is the cell c
         if self.use_gpu:
 
-            init_val=(torch.randn(1,self.batch_size,self.hidden_dim).cuda(),torch.randn(1,self.batch_size,self.hidden_dim).cuda())
+            init_val=(torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda(),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda())
             return(init_val)
             #return 
             
             #(Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()),
             #         Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()))
         else:
-            init_val=(torch.randn(1,self.batch_size,self.hidden_dim),torch.randn(1,self.batch_size,self.hidden_dim))
+            init_val=(torch.randn(self.nlayers,batch_size,self.hidden_dim),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim))
             return(init_val)
 
     def forward(self, input_sentence):
@@ -88,13 +90,15 @@ class EncoderLSTM(nn.Module):
         """
         
         input = self.embed(input_sentence).view(self.timesteps,-1,self.embed_len)
-        lstm_out, hidden_fin = self.lstm(input, self.hidden)
+        batch_size=input.shape[1]
+        hidden_val=self.init_hidden(batch_size)
+        lstm_out, hidden_fin = self.lstm(input, hidden_val)
         #print(hidden_fin[0][-1].size())
         linear_scores=self.linear(lstm_out[-1])
         #linear_scores=self.dropout(linear_scores)
         #act_vals=F.relu(linear_scores)
         act_vals=torch.tanh(linear_scores)
-        return(linear_scores)
+        return(act_vals)
 
 class FusionModule(nn.Module):
     def __init__(self,qnetwork,img_network,fuse_embed_size=2048,input_fc_size=1024,class_size=3123,dropout_rate=0.2):
@@ -124,8 +128,11 @@ class FusionModule(nn.Module):
         lin_vals=torch.tanh(lin_op)
         #lin_vals=torch.tanh(lin_op)
         #lin_vals=self.dropout(lin_vals)
+        #print('Weights printing')
+        #print(self.q_net.linear.weight.data)
         class_embed=self.class_layer(lin_vals)
         class_vals=F.softmax(class_embed,dim=1)
+
         return(class_vals)
 
 
