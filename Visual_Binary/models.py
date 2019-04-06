@@ -40,7 +40,7 @@ class Vgg16_4096(nn.Module):
        # bottle1.extend(list(original_model.children())[1])
         bottle2 = []
     
-        bottle2.append(list(original_model.children())[1][:-3])
+        bottle2.append(list(original_model.children())[2][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
         for param in original_model.parameters():
@@ -50,8 +50,6 @@ class Vgg16_4096(nn.Module):
         x = self.features1(x)
         x = x.view(x.shape[0],-1)
         x = self.features2(x)
-        print("Image Features size: ",x.shape)
-        input()
         return x
 
 class LinearImageModel(nn.Module):
@@ -129,9 +127,6 @@ class FusionModule(nn.Module):
         """
         encoder_hidden_states=self.q_net(question_batch)
         image_features=self.im_net(image_batch)
-        print("Image Features size: ",image_features.shape)
-        print("Question features size: ",encoder_hidden_states.shape)
-        input()
         fuse_embed=torch.mul(encoder_hidden_states,image_features)
         lin_op=self.embed_layer(fuse_embed)
 #        lin_vals=torch.tanh(lin_op)

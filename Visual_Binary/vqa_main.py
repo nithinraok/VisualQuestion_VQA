@@ -39,15 +39,15 @@ def main(args):
 
     #model definition 
     image_model = LinearImageModel(n_input=4096,n_output=1024)
-    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=False,
+    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=True,
                                 fc_size=args.q_embed,max_seq_length=args.max_sequence_length,
                                 batch_size=args.batch_size).to(device)
     fusion_network=FusionModule(qnetwork=question_encoder,img_network=image_model,
                     fuse_embed_size=1024,fc_size=512).to(device)
 
     #Dataloader initialization
-    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=1)
-    eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
+    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=2)
+    eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=2)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -70,12 +70,15 @@ def main(args):
                 accuracy+=equality.type(torch.FloatTensor).mean()
         return loss,accuracy
     
-    logger=open('train_loss_log.txt','w')
+    logger=open('train_loss_log.txt','w+')
     loss_save=[]
     #Training starts
     for epoch in range(args.epochs):
         running_loss=0
         step=0
+    
+        _,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
+        print("Val Loss: {} Accuracy :{} ".format(loss,accuracy))
         for img_sample, ques_token, target in tqdm(train_loader):
             
             # print("Image file  size  : ",img_sample.shape)
@@ -96,15 +99,15 @@ def main(args):
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
-            if(step%2):
+            if(step%300==0):
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, step, total_step, loss.item())) 
             step+=1
         epoch_loss=running_loss/len(train_dataset)
-        print("Epoch Loss: ",epoch_loss)
-        string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,running_loss)
-        _,accuracy = evaluate_val(fusion_network,train_loader,criterion,device)
-        string+='Accuracy : '.format(accuracy)
+        print("Train Epoch Loss: ",epoch_loss)
+        val_loss,accuracy = evaluate_val(fusion_network,val_loader,criterion,device)
+        string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
+        string+='Accuracy : \n'.format(accuracy)
         logger.write(string)
         savemodel(image_model,device,"image_model")
         savemodel(question_encoder,device,"question_encoder")
