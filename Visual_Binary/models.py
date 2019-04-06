@@ -50,17 +50,21 @@ class Vgg16_4096(nn.Module):
         x = self.features1(x)
         x = x.view(x.shape[0],-1)
         x = self.features2(x)
+        print("Image Features size: ",x.shape)
+        input()
         return x
 
 class LinearImageModel(nn.Module):
     def __init__(self,n_input=4096,n_output=1024):
         super(LinearImageModel,self).__init__()
-
+        vgg16 = models.vgg16(pretrained=True)
+        self.pre_vgg = Vgg16_4096(vgg16)
         self.model = nn.Sequential(nn.Linear(n_input,n_output),
                         nn.ReLU()
                         )
     def forward(self,x):
-        out=self.model(x)
+        pre_trained=self.pre_vgg(x)
+        out=self.model(pre_trained)
         return out
 
 class EncoderLSTM(nn.Module):
@@ -125,6 +129,9 @@ class FusionModule(nn.Module):
         """
         encoder_hidden_states=self.q_net(question_batch)
         image_features=self.im_net(image_batch)
+        print("Image Features size: ",image_features.shape)
+        print("Question features size: ",encoder_hidden_states.shape)
+        input()
         fuse_embed=torch.mul(encoder_hidden_states,image_features)
         lin_op=self.embed_layer(fuse_embed)
 #        lin_vals=torch.tanh(lin_op)

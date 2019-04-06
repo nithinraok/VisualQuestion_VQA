@@ -38,9 +38,6 @@ def main(args):
     
 
     #model definition 
-    vgg16 = models.vgg16(pretrained=True)
-    image_Features_vgg = Vgg16_4096(vgg16)
-
     image_model = LinearImageModel(n_input=4096,n_output=1024)
     question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=False,
                                 fc_size=args.q_embed,max_seq_length=args.max_sequence_length,
