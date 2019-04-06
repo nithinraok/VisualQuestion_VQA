@@ -40,10 +40,12 @@ class Vgg16_4096(nn.Module):
        # bottle1.extend(list(original_model.children())[1])
         bottle2 = []
     
-        bottle2.append(list(original_model.children())[2][:-3])
+        bottle2.append(list(original_model.children())[1][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
-        
+        for param in original_model.parameters():
+            param.requires_grad=False
+
     def forward(self, x):
         x = self.features1(x)
         x = x.view(x.shape[0],-1)
@@ -76,48 +78,53 @@ class EncoderLSTM(nn.Module):
         self.timesteps=max_seq_length
 
         self.embed , self.vocab_len , self.embed_len = create_embedding_layer(weights_matrix,non_trainable=train_embed) 
-        self.lstm = nn.LSTM(self.embed_len, self.hidden_dim, self.nlayers)
+        self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers)
         self.linear = nn.Linear(self.hidden_dim, self.linear_fc_size)
-        self.hidden = self.init_hidden()
+
         
-    def init_hidden(self):
+    def init_hidden(self,batch_size):
         # first is the hidden h
         # second is the cell c
         if self.use_gpu:
-            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()),
-                     Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()))
+            return (torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda(),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda())
         else:
-            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)),
-                Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)))
+            return (torch.randn(self.nlayers,batch_size,self.hidden_dim),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim))
 
     def forward(self, input_sentence):
         """Forward pass of the encoderLSTM network
         """
         
-        input = self.embed(input_sentence).view(self.timesteps,self.batch_size,-1)
-        lstm_out, hidden_fin = self.lstm(input, self.hidden)
+        input = self.embed(input_sentence).view(self.timesteps,-1,self.embed_len)
+        batch_size=input.shape[1]
+        hidden_val = self.init_hidden(batch_size)
+        lstm_out, hidden_fin = self.lstm(input, hidden_val)
         linear_scores=self.linear(hidden_fin[0][-1])
 #        act_vals=torch.tanh(linear_scores)
         act_vals= nn.ReLU()(linear_scores)
         return(act_vals)
 
 class FusionModule(nn.Module):
-    def __init__(self,fuse_embed_size=1024,fc_size=512,class_size=2):
+    def __init__(self,qnetwork,img_network,fuse_embed_size=1024,fc_size=512,class_size=2):
         """Module for fusing the mean pooled image features and lstm hidden states
         """
         super(FusionModule, self).__init__()
         self.fuse_size=fuse_embed_size
         self.num_classes=class_size
         self.fc_size=fc_size
-
+        self.q_net = qnetwork
+        self.im_net=img_network
         
         self.embed_layer=nn.Linear(self.fuse_size,self.fc_size)
         self.class_layer=nn.Linear(self.fc_size,self.num_classes)
 
 
-    def forward(self,encoder_hidden_states, image_features):
+    def forward(self,question_batch, image_batch):
         """Forward pass of the Fusion module
         """
+        encoder_hidden_states=self.q_net(question_batch)
+        image_features=self.im_net(image_batch)
         fuse_embed=torch.mul(encoder_hidden_states,image_features)
         lin_op=self.embed_layer(fuse_embed)
 #        lin_vals=torch.tanh(lin_op)
