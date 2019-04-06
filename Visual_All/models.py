@@ -30,23 +30,24 @@ class EncoderCNN(nn.Module):
         modules = list(resnet.children())[:-1]      # delete the last fc layer.
         self.resnet = nn.Sequential(*modules)
         self.linear = nn.Linear(resnet.fc.in_features, embed_size)
+        for param in self.resnet.parameters():
+            param.requires_grad = False
         #self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)
         
     def forward(self, images):
         """Extract feature vectors from input images."""
         #with torch.no_grad():
         #    features = self.resnet(images)
-        for param in self.resnet.parameters():
-            param.requires_grad = False
         features = self.resnet(images)
         features = features.reshape(features.size(0), -1)
         features=self.linear(features)
-        features=F.relu(features)
+        features=torch.tanh(features)
+        #features=F.relu(features)
         #features = self.bn(self.linear(features))
         return features
 
 class EncoderLSTM(nn.Module):
-    def __init__(self, hidden_size,weights_matrix,train_embed=False,use_gpu=True,fc_size=2048, num_layers=2, max_seq_length=14, batch_size=32,dropout_rate=0.5):
+    def __init__(self, hidden_size,weights_matrix,train_embed=False,use_gpu=True,fc_size=2048, num_layers=1, max_seq_length=14, batch_size=32,dropout_rate=0.5):
         """Module for stacked LSTM which returns a single hidden state for the input question
         """
         super(EncoderLSTM, self).__init__()
@@ -58,11 +59,11 @@ class EncoderLSTM(nn.Module):
         self.linear_fc_size=fc_size
         self.nlayers=num_layers
         self.timesteps=max_seq_length
-        self.vocab_len=19901
-        self.embed_len=300
-        self.embed=nn.Embedding(self.vocab_len, self.embed_len)
-        #self.embed , self.vocab_len , self.embed_len = create_embedding_layer(weights_matrix,non_trainable=train_embed) 
-        self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers,dropout=dropout_rate)
+        #self.vocab_len=19901
+        #self.embed_len=300
+        #self.embed=nn.Embedding(self.vocab_len, self.embed_len)
+        self.embed , self.vocab_len , self.embed_len = create_embedding_layer(weights_matrix,non_trainable=train_embed) 
+        self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers)
         self.linear = nn.Linear(self.hidden_dim, self.linear_fc_size)
         self.dropout = nn.Dropout(dropout_rate)
         self.hidden = self.init_hidden()
@@ -71,24 +72,29 @@ class EncoderLSTM(nn.Module):
         # first is the hidden h
         # second is the cell c
         if self.use_gpu:
-            return (Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()),
-                     Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()))
+
+            init_val=(torch.randn(1,self.batch_size,self.hidden_dim).cuda(),torch.randn(1,self.batch_size,self.hidden_dim).cuda())
+            return(init_val)
+            #return 
+            
+            #(Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()),
+            #         Variable(torch.zeros(2, self.batch_size, self.hidden_dim).cuda()))
         else:
-            return (Variable(torch.zeros(2, self.batch_size, self.hidden_dim)),
-                Variable(torch.zeros(2, self.batch_size, self.hidden_dim)))
+            init_val=(torch.randn(1,self.batch_size,self.hidden_dim),torch.randn(1,self.batch_size,self.hidden_dim))
+            return(init_val)
 
     def forward(self, input_sentence):
         """Forward pass of the encoderLSTM network
         """
         
-        input = self.embed(input_sentence).view(self.timesteps,self.batch_size,self.embed_len)
+        input = self.embed(input_sentence).view(self.timesteps,-1,self.embed_len)
         lstm_out, hidden_fin = self.lstm(input, self.hidden)
         #print(hidden_fin[0][-1].size())
-        linear_scores=self.linear(hidden_fin[0][-1])
+        linear_scores=self.linear(lstm_out[-1])
         #linear_scores=self.dropout(linear_scores)
-        act_vals=F.relu(linear_scores)
-        #act_vals=torch.tanh(linear_scores)
-        return(act_vals)
+        #act_vals=F.relu(linear_scores)
+        act_vals=torch.tanh(linear_scores)
+        return(linear_scores)
 
 class FusionModule(nn.Module):
     def __init__(self,qnetwork,img_network,fuse_embed_size=2048,input_fc_size=1024,class_size=3123,dropout_rate=0.2):
@@ -103,7 +109,7 @@ class FusionModule(nn.Module):
         
         self.embed_layer=nn.Linear(self.input_fc_size,self.fuse_embed_size)
         self.class_layer=nn.Linear(self.fuse_embed_size,self.num_classes)
-        self.dropout=nn.Dropout(dropout_rate)
+        #elf.dropout=nn.Dropout(dropout_rate)
         
 
     def forward(self,sent_batch, image_batch):
@@ -115,7 +121,7 @@ class FusionModule(nn.Module):
         fuse_embed=encoder_hidden_states*image_features
         #fuse_embed=self.dropout(fuse_embed)
         lin_op=self.embed_layer(fuse_embed)
-        lin_vals=F.relu(lin_op)
+        lin_vals=torch.tanh(lin_op)
         #lin_vals=torch.tanh(lin_op)
         #lin_vals=self.dropout(lin_vals)
         class_embed=self.class_layer(lin_vals)

@@ -63,7 +63,6 @@ def main(args):
     #transforms for pretrained network(transform for resnet now)
     train_transform = transforms.Compose([ 
         transforms.Resize((args.crop_size,args.crop_size)),
-        transforms.RandomHorizontalFlip(), 
         transforms.ToTensor(), 
         transforms.Normalize((0.485, 0.456, 0.406), 
                              (0.229, 0.224, 0.225))])
@@ -77,21 +76,22 @@ def main(args):
     
     dictionary = Dictionary.load_from_file('data/dictionary.pkl')
     train_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='train',transform_set=train_transform)
-    eval_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='val',transform_set=validate_transform)
+    #eval_dataset = VQADataset(image_root_dir=args.img_root_dir,dictionary=dictionary,dataroot=args.data_root_dir,choice='val',transform_set=validate_transform)
     
 
     #model definition 
     print('Loading the models')
     image_encoder=EncoderCNN(embed_size=args.img_feats).to(device)
     question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,fc_size=args.q_embed,max_seq_length=args.max_sequence_length,batch_size=args.batch_size).to(device)
-    fusion_network=FusionModule(qnetwork=question_encoder,img_network=image_encoder,fuse_embed_size=args.img_feats,input_fc_size=args.fuse_embed,class_size=args.num_class).to(device)
-    print(list(fusion_network.parameters()))
-    
+    fusion_network=FusionModule(qnetwork=question_encoder,img_network=image_encoder,fuse_embed_size=args.fuse_embed,input_fc_size=args.img_feats,class_size=args.num_class).to(device)
+    #print(list(fusion_network.parameters()))
+    print(fusion_network)
+    #input()
     
 
     #Dataloader initialization
-    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=1)
-    eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
+    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=12)
+    #eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -103,47 +103,55 @@ def main(args):
     total_step = len(train_loader)
     step=0
     #Training starts
-    print('Training Starting ......................')
+    #print('Training Starting ......................')
+
+    print('Evaluating random inputs to the network')
+    y = torch.rand(32,3,224,224)
+    sent=torch.randint(low=0,high=19900,size=(32,14))
+    labels=torch.randint(low=0,high=3123,size=(32,))
+
+    y=y.to(device)
+    sent=sent.to(device)
+    labels=labels.to(device)
+
+    
     for epoch in range(args.epochs):
+
+        running_loss = 0.0
+        running_corrects = 0
         for data in tqdm(train_loader):
-            """class_indices=convert_one_hot2int(labels.numpy())
-            image_feats=torch.mean(image_features,dim=1)
-            image_feats=image_feats.to(device)
-            class_indices=torch.from_numpy(class_indices).long().to(device)
-            #labels=labels.to(device)
-
-            #preproc the tokens after converting from tensor to numpy. Then numpy to tensor before passing to loss fn
-            question_array=preproc_question_tokens(question_tokens.cpu().numpy())
-            question_tokens=toch.from_numpy(question_array).to(device)"""
-
             image_samp,question_toks,labels=data
             image_samp=image_samp.to(device)
             question_toks=question_toks.to(device)
             labels=labels.to(device)
-            #fusion_network.zero_grad()
-            image_samp,question_toks,labels=Variable(image_samp),Variable(question_toks),Variable(labels)
-            #Forward, Backward and Optimize
-            #image_feats=image_encoder(image_samp)
-            #question_features=question_encoder(question_toks)
+           
             class_outputs=fusion_network(question_toks,image_samp)
-
+            _, preds = torch.max(class_outputs, 1)
             loss = criterion(class_outputs, labels)
             #question_encoder.zero_grad()
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
+            # statistics
+            running_loss += loss.item() * image_samp.size(0)
+            running_corrects += torch.sum(preds == labels.data)
             if(step%10==0):
             #optimizer.zero_grad()
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, step, total_step, loss.item()))
             step=step+1
+        epoch_loss = running_loss / len(train_dataset)
+        epoch_acc = running_corrects.double() / len(train_dataset)
+
+        print('{} Loss: {:.4f} Acc: {:.4f}'.format('train', epoch_loss, epoch_acc))
     
 
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=30)
+    parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--num_hid', type=int, default=512)
     parser.add_argument('--crop_size', type=int, default=224 , help='size for randomly cropping images')
     parser.add_argument('--img_root_dir', type=str, default="/data/digbose92/VQA/COCO", help='location of the COCO images')
@@ -151,14 +159,14 @@ if __name__ == "__main__":
     #parser.add_argument('--model', type=str, default='baseline0_newatt')
     parser.add_argument('--file_name', type=str, default="data/glove6b_init_300d.npy")
     parser.add_argument('--output', type=str, default='saved_models')
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--max_sequence_length', type=int, default=14)
     parser.add_argument('--seed', type=int, default=1111, help='random seed')
     parser.add_argument('--q_embed',type=int, default=1024, help='embedding output of the encoder RNN')
     parser.add_argument('--img_feats',type=int, default=1024, help='input feature size of the image space')
-    parser.add_argument('--fuse_embed',type=int, default=1024, help='Overall embedding size of the fused network')
-    parser.add_argument('--num_class',type=int, default=3123, help='Number of output classes')
-    parser.add_argument('--learning_rate',type=float,default=0.01,help='Learning rate')
+    parser.add_argument('--fuse_embed',type=int, default=1000, help='Overall embedding size of the fused network')
+    parser.add_argument('--num_class',type=int, default=2, help='Number of output classes')
+    parser.add_argument('--learning_rate',type=float,default=0.001,help='Learning rate')
     args = parser.parse_args()
     main(args)
 

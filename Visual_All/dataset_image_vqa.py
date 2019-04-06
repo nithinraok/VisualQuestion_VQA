@@ -14,6 +14,7 @@ import cv2
 import torchvision.transforms.functional as F
 from models import *
 from tqdm import tqdm
+import time
 
 def _create_entry(img, question, answer):
     answer.pop('image_id')
@@ -37,18 +38,48 @@ def _load_dataset(dataroot, name, img_id2val):
         dataroot, 'v2_OpenEnded_mscoco_%s2014_questions.json' % name)
     questions = sorted(json.load(open(question_path))['questions'],
                        key=lambda x: x['question_id'])
-    answer_path = os.path.join(dataroot, 'cache', '%s_target.pkl' % name)
+    answer_path = os.path.join(dataroot, 'cache', '%s_target_yes_no.pkl' % name)
     answers = cPickle.load(open(answer_path, 'rb'))
     answers = sorted(answers, key=lambda x: x['question_id'])
+    try:
+        utils.assert_eq(len(questions), len(answers))
+        entries = []
+        for question, answer in zip(questions, answers):
+            utils.assert_eq(question['question_id'], answer['question_id'])
+            utils.assert_eq(question['image_id'], answer['image_id'])
+            img_id = question['image_id']
+            if(len(answer['scores'])>0):
+                entries.append(_create_entry(img_id2val[img_id], question, answer))
+    except:
+        #question_id_filter=[]
+        question_id_filter=[answer['question_id'] for answer in answers]
+        #questions_filter=[]
+        #for question_id_curr in question_id_filter:
+        #    for entr in questions:
+        #        if(entr['question_id']==question_id_curr):
+        #            questions_filter.append(entr)
+        #            break
 
-    utils.assert_eq(len(questions), len(answers))
-    entries = []
-    for question, answer in zip(questions, answers):
-        utils.assert_eq(question['question_id'], answer['question_id'])
-        utils.assert_eq(question['image_id'], answer['image_id'])
-        img_id = question['image_id']
-        if(len(answer['scores'])>0):
-            entries.append(_create_entry(img_id2val[img_id], question, answer))
+        question_id_tot=[entr['question_id'] for entr in questions]
+        print('Finding matches')
+        question_id_filter.sort()
+        set_q_id=set(question_id_filter)
+        start_time=time.time()
+        id_matches=[id for id,val in enumerate(question_id_tot) if val in set_q_id]
+        end_time=time.time()
+        print('Matches found')
+        time_lpsd=end_time-start_time
+        print('Time elapsed:%f' %(time_lpsd))
+        questions_filter=[questions[id] for id in id_matches]
+        utils.assert_eq(len(questions_filter), len(answers))
+        entries = []
+        for question, answer in zip(questions_filter, answers):
+            utils.assert_eq(question['question_id'], answer['question_id'])
+            utils.assert_eq(question['image_id'], answer['image_id'])
+            img_id = question['image_id']
+            if(len(answer['scores'])>0):
+                entries.append(_create_entry(img_id2val[img_id], question, answer))
+        #print(question_id_filter)
 
     return entries
 
@@ -104,6 +135,10 @@ class VQADataset(Dataset):
         answer_data=entry['answer']
         max_id=answer_data['scores'].index(max(answer_data['scores'])) #finding the maximum score index
         label=int(answer_data['labels'][max_id])
+        if(label==3):
+            label=0
+        elif(label==9):
+            label=1
         image_id=entry['image_id']
         
         

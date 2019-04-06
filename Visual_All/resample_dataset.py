@@ -1,8 +1,11 @@
 import pickle 
 import pandas as pd 
 from tqdm import tqdm
+import json
+import time
 
 pkl_file='data/cache/train_target.pkl'
+question_path='data/v2_OpenEnded_mscoco_train2014_questions.json'
 
 
 id_data=pickle.load(open(pkl_file,'rb'))
@@ -33,8 +36,22 @@ for entry_val in entry_list:
         entry_filter_list.append(entry_val)
 
 
+questions = sorted(json.load(open(question_path))['questions'],
+                       key=lambda x: x['question_id'])
+question_id_tot=[question['question_id'] for question in questions]
+question_id_filter=[entr['question_id'] for entr in entry_filter_list]
+question_id_filter.sort()
+question_id_set=set(question_id_filter)
+print('Finding matches')
+start=time.time()
+id_set=[id for id,val in enumerate(question_id_tot) if val in question_id_set]
+end=time.time()
+time=end-start
+print('Time elapsed:%f' %(time))
 #print(len(entry_filter_list))
 with open('data/cache/train_target_yes_no.pkl','wb') as f:
     pickle.dump(entry_filter_list,f)
+
+
 
 
