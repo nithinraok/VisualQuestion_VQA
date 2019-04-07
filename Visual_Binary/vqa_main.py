@@ -50,36 +50,39 @@ def main(args):
     eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=2)
 
     # Loss and optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.NLLLoss()
     # params = list(image_model.parameters())+list(question_encoder.parameters()) + list(fusion_network.parameters()) 
-    optimizer = torch.optim.Adam(fusion_network.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.RMSprop(fusion_network.parameters(), lr=args.learning_rate)
 
     # Train the models
     total_step = len(train_loader)
 
     def evaluate_val(model,train_loader,criterion,device):
-        print("Evaluatiing Validation Loader")
+        print("Evaluating Validation Loader")
         loss=0
         accuracy=0
         with torch.no_grad():
             for image_sample,question_token,labels in iter(train_loader):
                 image_sample,question_token,labels = image_sample.to(device),question_token.to(device),labels.to(device)
                 output=model.forward(question_token,image_sample)
-                loss+= criterion(output,labels).item()
                 ps = torch.exp(output)
+                if(loss==0):
+                    print("Output : \n ",ps)
+                loss+= criterion(output,labels).item()
+
                 equality= (labels.data == ps.max(dim=1)[1])
                 accuracy+=equality.type(torch.FloatTensor).mean()
         return loss,accuracy
     
-    logger=open('train_loss_log.txt','w+')
+    logger=open('train_loss_log.txt','w')
     loss_save=[]
     #Training starts
+    fusion_network.to(device) 
+    #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
     for epoch in range(args.epochs):
         running_loss=0
         step=0
-        fusion_network.to(device) 
-        loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
-        print("Val Loss: {} Accuracy :{} ".format(loss,accuracy))
+        #print("Val Loss: {} Accuracy :{} ".format(val_loss,accuracy))
         for img_sample, ques_token, target in tqdm(train_loader):
             
             # print("Image file  size  : ",img_sample.shape)
@@ -90,17 +93,17 @@ def main(args):
             image_feats=img_sample.to(device)
             question_tokens=ques_token.to(device)
             target=target.to(device)
-
             # #Forward, Backward and Optimize
             optimizer.zero_grad()
             class_outputs=fusion_network(question_tokens,image_feats)
-
+            print(class_outputs.shape)
+#            loss = nn.functional.binary_cross_entropy_with_logits(class_outputs,target)
             loss = criterion(class_outputs, target)
             loss.backward()
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
-            if(step%300==0):
+            if(step%20==0):
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, step, total_step, loss.item())) 
             step+=1
@@ -108,10 +111,10 @@ def main(args):
         print("Train Epoch Loss: ",epoch_loss)
         val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
         string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
-        string+='Accuracy : \n'.format(accuracy)
+        string+='Accuracy : {}\n'.format(accuracy)
         logger.write(string)
-        savemodel(image_model,device,"image_model")
-        savemodel(question_encoder,device,"question_encoder")
+#        savemodel(image_model,device,"image_model")
+#        savemodel(question_encoder,device,"question_encoder")
         savemodel(fusion_network,device,"fusion_network")
     logger.close()
 

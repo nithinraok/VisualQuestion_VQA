@@ -158,7 +158,6 @@ class VQAFeatureDataset(Dataset):
         if self.transforms:
             sample = self.transforms(sample)
 
-        
         return sample, ques_token, target
 
     def __len__(self):

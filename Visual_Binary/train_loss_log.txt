@@ -1,1 +1,0 @@
-Epoch 0:30 loss: 122.58697158098221 	Accuracy : 
