@@ -4,8 +4,8 @@ from tqdm import tqdm
 import json
 import time
 
-pkl_file='data/cache/train_target.pkl'
-question_path='data/v2_OpenEnded_mscoco_train2014_questions.json'
+pkl_file='data/cache/val_target.pkl'
+question_path='data/v2_OpenEnded_mscoco_val2014_questions.json'
 
 
 id_data=pickle.load(open(pkl_file,'rb'))
@@ -49,7 +49,7 @@ end=time.time()
 time=end-start
 print('Time elapsed:%f' %(time))
 #print(len(entry_filter_list))
-with open('data/cache/train_target_yes_no.pkl','wb') as f:
+with open('data/cache/val_target_yes_no.pkl','wb') as f:
     pickle.dump(entry_filter_list,f)
 
 

@@ -91,14 +91,14 @@ def main(args):
     
 
     #Dataloader initialization
-    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=12)
+    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=16)
     # eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
     #params=lis
     #params = list(image_encoder.linear.parameters())+list(image_encoder.bn.parameters())+list(question_encoder.parameters()) + list(fusion_network.parameters()) 
-    optimizer = torch.optim.Adam(fusion_network.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.RMSprop(fusion_network.parameters(), lr=args.learning_rate)
 
     # Train the models
     total_step = len(train_loader)
@@ -112,11 +112,11 @@ def main(args):
         with torch.no_grad():
             for image_sample,question_token,labels in iter(train_loader):
                 image_sample,question_token,labels = image_sample.to(device),question_token.to(device),labels.to(device)
-                output=model.forward(question_token,image_samp)
+                output=model.forward(question_token,image_sample)
                 loss+= criterion(output,labels).item()
                 ps = torch.exp(output)
                 equality= (labels.data == ps.max(dim=1)[1])
-                accuracy+=equality.type(torch.FLoatTensor).mean()
+                accuracy+=equality.type(torch.FloatTensor).mean()
         return loss,accuracy
 
     file_train=open('train_loss_log.txt','a+')
@@ -126,6 +126,7 @@ def main(args):
 
         running_loss = 0.0
         running_corrects = 0
+        step=0
         for data in tqdm(train_loader):
             image_samp,question_toks,labels=data
             image_samp=image_samp.to(device)
@@ -144,16 +145,18 @@ def main(args):
             # statistics
             running_loss += loss.item() * image_samp.size(0)
             running_corrects += torch.sum(preds == labels.data)
-            if(step%10==0):
+            if(step%300==0):
             #optimizer.zero_grad()
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                     .format(epoch, args.epochs, step, total_step, loss.item()))
             step=step+1
         epoch_loss = running_loss / len(train_dataset)
         epoch_acc = running_corrects.double() / len(train_dataset)
-        loss_save.append(running_loss)
+        print(epoch_loss)
+        #loss_save.append(val_loss)
+        
+        val_loss,accuracy = evaluate_val(fusion_network,train_loader,criterion,device)
         string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,running_loss)
-        _,accuracy = evaluate_val(fusion_network,train_loader,criterion,device)
         string+='Accuracy : '.format(accuracy)
         file_train.write(string)
         print('{} Loss: {:.4f} Acc: {:.4f}'.format('train', epoch_loss, epoch_acc))
