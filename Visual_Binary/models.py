@@ -6,6 +6,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 #from torchsummary import summary
 import numpy as np
+from torch.nn.utils.weight_norm import weight_norm as WN
 
 def savemodel(model,device,name):
     model.to('cpu')
@@ -16,7 +17,7 @@ def savemodel(model,device,name):
                   'state_dict': model.state_dict()
                   }
 
-    torch.save(checkpoint, 'savedmodels/final_model_'+'name'+'.pth')
+    torch.save(checkpoint, 'savedmodels/final_model_'+name+'.pth')
     model.to(device)
 
 
@@ -43,7 +44,9 @@ class Vgg16_4096(nn.Module):
         bottle2.append(list(original_model.children())[2][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
-        
+        for param in original_model.parameters():
+            param.requires_grad=False
+
     def forward(self, x):
         x = self.features1(x)
         x = x.view(x.shape[0],-1)
@@ -53,12 +56,15 @@ class Vgg16_4096(nn.Module):
 class LinearImageModel(nn.Module):
     def __init__(self,n_input=4096,n_output=1024):
         super(LinearImageModel,self).__init__()
-
-        self.model = nn.Sequential(nn.Linear(n_input,n_output),
-                        nn.ReLU()
+        vgg16 = models.vgg16(pretrained=True)
+        self.pre_vgg = Vgg16_4096(vgg16)
+        self.model = nn.Sequential(WN(nn.Linear(n_input,n_output)),
+                        nn.Tanh()
                         )
     def forward(self,x):
-        out=self.model(x)
+        pre_trained=self.pre_vgg(x)
+        pre_trained=F.normalize(pre_trained,p=2,dim=1)
+        out=self.model(pre_trained)
         return out
 
 class EncoderLSTM(nn.Module):
@@ -76,55 +82,72 @@ class EncoderLSTM(nn.Module):
         self.timesteps=max_seq_length
 
         self.embed , self.vocab_len , self.embed_len = create_embedding_layer(weights_matrix,non_trainable=train_embed) 
-        self.lstm = nn.LSTM(self.embed_len, self.hidden_dim, self.nlayers)
-        self.linear = nn.Linear(self.hidden_dim, self.linear_fc_size)
-        self.hidden = self.init_hidden()
+        self.lstm = nn.LSTM(input_size=self.embed_len, hidden_size=self.hidden_dim, num_layers=self.nlayers)
+        self.linear = WN(nn.Linear(self.hidden_dim, self.linear_fc_size))
+
         
-    def init_hidden(self):
+    def init_hidden(self,batch_size):
         # first is the hidden h
         # second is the cell c
         if self.use_gpu:
-            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()),
-                     Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim).cuda()))
+            return (torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda(),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim).cuda())
         else:
-            return (Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)),
-                Variable(torch.zeros(self.nlayers, self.batch_size, self.hidden_dim)))
+            return (torch.randn(self.nlayers,batch_size,self.hidden_dim),
+                        torch.randn(self.nlayers,batch_size,self.hidden_dim))
 
     def forward(self, input_sentence):
         """Forward pass of the encoderLSTM network
         """
         
-        input = self.embed(input_sentence).view(self.timesteps,self.batch_size,-1)
-        lstm_out, hidden_fin = self.lstm(input, self.hidden)
+        input = self.embed(input_sentence).view(self.timesteps,-1,self.embed_len)
+        batch_size=input.shape[1]
+        hidden_val = self.init_hidden(batch_size)
+        lstm_out, hidden_fin = self.lstm(input, hidden_val)
         linear_scores=self.linear(hidden_fin[0][-1])
 #        act_vals=torch.tanh(linear_scores)
-        act_vals= nn.ReLU()(linear_scores)
+        act_vals= nn.Tanh()(linear_scores)
         return(act_vals)
 
 class FusionModule(nn.Module):
-    def __init__(self,fuse_embed_size=1024,fc_size=512,class_size=2):
+    def __init__(self,qnetwork,img_network,fuse_embed_size=1024,fc_size=512,class_size=2):
         """Module for fusing the mean pooled image features and lstm hidden states
         """
         super(FusionModule, self).__init__()
         self.fuse_size=fuse_embed_size
         self.num_classes=class_size
         self.fc_size=fc_size
+        self.q_net = qnetwork
+        self.im_net=img_network
+ 
+        self.embed_layer=WN(nn.Linear(self.fuse_size,self.fc_size))
+        self.class_layer=WN(nn.Linear(self.fc_size,self.num_classes))
 
-        
-        self.embed_layer=nn.Linear(self.fuse_size,self.fc_size)
-        self.class_layer=nn.Linear(self.fc_size,self.num_classes)
 
-
-    def forward(self,encoder_hidden_states, image_features):
+    def forward(self,question_batch, image_batch):
         """Forward pass of the Fusion module
         """
+        encoder_hidden_states=self.q_net(question_batch)
+        image_features=self.im_net(image_batch)
         fuse_embed=torch.mul(encoder_hidden_states,image_features)
         lin_op=self.embed_layer(fuse_embed)
+        #print("Printing Weights")
+        #print(self.im_net.model[0].weight.data)
+        #input()
+        print("Printing fuse_embed layer")
+        print(lin_op)
+        input()
 #        lin_vals=torch.tanh(lin_op)
-        lin_vals=nn.ReLU()(lin_op)  
+        lin_vals=nn.Tanh()(lin_op)  
         class_embed=self.class_layer(lin_vals)
-        class_vals=F.softmax(class_embed,dim=1)
-        return(class_vals)
+        #class_vals=F.log_softmax(class_embed,dim=1)
+        print("Printing class_embed layer")
+        print(self.embed_layer.weight.data)
+        input()
+        print("Printing class_vals layer")
+        print(self.class_layer.weight.data)
+        input()
+        return(class_embed)
 
 
 if __name__ == "__main__":
