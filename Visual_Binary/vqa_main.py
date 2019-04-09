@@ -39,7 +39,7 @@ def main(args):
 
     #model definition 
     image_model = LinearImageModel(n_input=4096,n_output=1024)
-    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=False,
+    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=True,
                                 fc_size=args.q_embed,max_seq_length=args.max_sequence_length,
                                 batch_size=args.batch_size).to(device)
     fusion_network=FusionModule(qnetwork=question_encoder,img_network=image_model,
@@ -76,16 +76,19 @@ def main(args):
     
     logger=open('train_loss_log.txt','w')
     loss_save=[]
+    img_sample, ques_token, target=next(iter(train_loader))
+
     #Training starts
     fusion_network.to(device) 
     #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
-    for img_sample, ques_token, target in tqdm(train_loader):
-        for epoch in range(args.epochs):
-            running_loss=0
-            step=0
-        #print("Val Loss: {} Accuracy :{} ".format(val_loss,accuracy))
-        # for img_sample, ques_token, target in tqdm(train_loader):
+    for epoch in range(args.epochs):
+        running_loss=0
+        step=0
             
+        #print("Val Loss: {} Accuracy :{} ".format(val_loss,accuracy))
+        #for img_sample, ques_token, target in tqdm(train_loader):
+        #for img_sample, ques_token, target in img_sample, ques_token, target:    
+        for i in range(1):
             # print("Image file  size  : ",img_sample.shape)
             # print("Question token: ",ques_token.shape)
             # print("target :",target)
@@ -115,12 +118,13 @@ def main(args):
         
         epoch_loss=running_loss/len(train_dataset)
         print("Train Epoch Loss: ",epoch_loss)
-        val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
-        string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
-        string+='Accuracy : {}\n'.format(accuracy)
-        print(string)
-        input()
-        logger.write(string)
+        for ps,t in zip(class_outputs,target):
+            print("Output {} : {}".format(torch.argmax(torch.exp(ps)),t))
+        #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
+        #string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
+        #string+='Accuracy : {}\n'.format(accuracy)
+        #print(string)
+        #logger.write(string)
 #        savemodel(image_model,device,"image_model")
 #        savemodel(question_encoder,device,"question_encoder")
         savemodel(fusion_network,device,"fusion_network")
