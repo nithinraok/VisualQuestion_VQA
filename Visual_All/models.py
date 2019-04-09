@@ -22,11 +22,11 @@ def create_embedding_layer(weights_matrix,non_trainable=False):
     return emb_layer, num_embeddings, embedding_dim
 
 
-class EncoderCNN(nn.Module):
+'''class EncoderCNN(nn.Module):
     def __init__(self, embed_size):
         """Load the pretrained ResNet-152 and replace top fc layer."""
         super(EncoderCNN, self).__init__()
-        resnet = models.resnet18(pretrained=True)
+        resnet = models.resnet152(pretrained=True)
         modules = list(resnet.children())[:-1]      # delete the last fc layer.
         self.resnet = nn.Sequential(*modules)
         self.linear = nn.Linear(resnet.fc.in_features, embed_size)
@@ -45,6 +45,34 @@ class EncoderCNN(nn.Module):
         #features=F.relu(features)
         #features = self.bn(self.linear(features))
         return features
+'''
+
+class EncoderCNN_VGG16(nn.Module):
+    def __init__(self, embed_size):
+        """Load the pretrained ResNet-152 and replace top fc layer."""
+        super(EncoderCNN_VGG16, self).__init__()
+        vgg16 = models.vgg16(pretrained=True)
+        modules = list(vgg16.children())[:-1]      # delete the last fc layer.
+        self.resnet = nn.Sequential(*modules)
+        self.linear = nn.Linear(resnet.fc.in_features, embed_size)
+        for param in self.resnet.parameters():
+            param.requires_grad = False
+        #self.bn = nn.BatchNorm1d(embed_size, momentum=0.01)
+        
+    def forward(self, images):
+        """Extract feature vectors from input images."""
+        #with torch.no_grad():
+        #    features = self.resnet(images)
+        features = self.resnet(images)
+        features = features.reshape(features.size(0), -1)
+        features=self.linear(features)
+        features=torch.tanh(features)
+        #features=F.relu(features)
+        #features = self.bn(self.linear(features))
+        return features
+
+
+
 
 class EncoderLSTM(nn.Module):
     def __init__(self, hidden_size,weights_matrix,train_embed=False,use_gpu=True,fc_size=2048, num_layers=1, max_seq_length=14, batch_size=32,dropout_rate=0.5):
@@ -113,6 +141,7 @@ class FusionModule(nn.Module):
         
         self.embed_layer=nn.Linear(self.input_fc_size,self.fuse_embed_size)
         self.class_layer=nn.Linear(self.fuse_embed_size,self.num_classes)
+        self.logsoftmax=nn.LogSoftmax(dim=1)
         #elf.dropout=nn.Dropout(dropout_rate)
         
 
@@ -131,7 +160,7 @@ class FusionModule(nn.Module):
         #print('Weights printing')
         #print(self.q_net.linear.weight.data)
         class_embed=self.class_layer(lin_vals)
-        class_vals=F.softmax(class_embed,dim=1)
+        class_vals=self.logsoftmax(class_embed)
 
         return(class_vals)
 

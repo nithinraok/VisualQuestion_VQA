@@ -53,7 +53,7 @@ def main(args):
 
     # CUDA for PyTorch
     #if cuda:
-    device=2
+    device=3
     torch.cuda.set_device(device)
 
     #device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
@@ -91,14 +91,14 @@ def main(args):
     
 
     #Dataloader initialization
-    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=16)
+    train_loader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=12)
     # eval_loader =  DataLoader(eval_dataset, args.batch_size, shuffle=True, num_workers=1)
 
     # Loss and optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.NLLLoss()
     #params=lis
     #params = list(image_encoder.linear.parameters())+list(image_encoder.bn.parameters())+list(question_encoder.parameters()) + list(fusion_network.parameters()) 
-    optimizer = torch.optim.RMSprop(fusion_network.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adam(fusion_network.parameters(), lr=args.learning_rate)
 
     # Train the models
     total_step = len(train_loader)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     parser.add_argument('--img_feats',type=int, default=1024, help='input feature size of the image space')
     parser.add_argument('--fuse_embed',type=int, default=1000, help='Overall embedding size of the fused network')
     parser.add_argument('--num_class',type=int, default=2, help='Number of output classes')
-    parser.add_argument('--learning_rate',type=float,default=0.01,help='Learning rate')
+    parser.add_argument('--learning_rate',type=float,default=0.001,help='Learning rate')
     args = parser.parse_args()
     main(args)
 
