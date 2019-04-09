@@ -41,7 +41,7 @@ class Vgg16_4096(nn.Module):
        # bottle1.extend(list(original_model.children())[1])
         bottle2 = []
     
-        bottle2.append(list(original_model.children())[2][:-3])
+        bottle2.append(list(original_model.children())[1][:-3])
         self.features1 = nn.Sequential(*bottle1)
         self.features2 = nn.Sequential(*bottle2)
         for param in original_model.parameters():
@@ -140,14 +140,14 @@ class FusionModule(nn.Module):
 #        lin_vals=torch.tanh(lin_op)
         lin_vals=nn.Tanh()(lin_op)  
         class_embed=self.class_layer(lin_vals)
-        #class_vals=F.log_softmax(class_embed,dim=1)
+        class_vals=F.log_softmax(class_embed,dim=1)
         print("Printing class_embed layer")
         print(self.embed_layer.weight.data)
         input()
         print("Printing class_vals layer")
         print(self.class_layer.weight.data)
         input()
-        return(class_embed)
+        return(class_vals)
 
 
 if __name__ == "__main__":

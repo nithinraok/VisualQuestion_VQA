@@ -39,7 +39,7 @@ def main(args):
 
     #model definition 
     image_model = LinearImageModel(n_input=4096,n_output=1024)
-    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=True,
+    question_encoder=EncoderLSTM(hidden_size=args.num_hid,weights_matrix=weights,train_embed=True,use_gpu=False,
                                 fc_size=args.q_embed,max_seq_length=args.max_sequence_length,
                                 batch_size=args.batch_size).to(device)
     fusion_network=FusionModule(qnetwork=question_encoder,img_network=image_model,
@@ -53,7 +53,7 @@ def main(args):
     criterion = nn.NLLLoss()
     # params = list(image_model.parameters())+list(question_encoder.parameters()) + list(fusion_network.parameters()) 
     optimizer = torch.optim.RMSprop(fusion_network.parameters(), lr=args.learning_rate)
-
+    
     # Train the models
     total_step = len(train_loader)
 
@@ -100,6 +100,10 @@ def main(args):
 #            loss = nn.functional.binary_cross_entropy_with_logits(class_outputs,target)
             loss = criterion(class_outputs, target)
             loss.backward()
+            nn.utils.clip_grad_norm_(fusion_network.parameters(), 0.25)
+            print("Prinintng whole network parameters")
+            print(list(fusion_network.parameters())[-1].grad.data.norm(2).item())
+            input()
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
