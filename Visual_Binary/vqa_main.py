@@ -79,11 +79,12 @@ def main(args):
     #Training starts
     fusion_network.to(device) 
     #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
-    for epoch in range(args.epochs):
-        running_loss=0
-        step=0
+    for img_sample, ques_token, target in tqdm(train_loader):
+        for epoch in range(args.epochs):
+            running_loss=0
+            step=0
         #print("Val Loss: {} Accuracy :{} ".format(val_loss,accuracy))
-        for img_sample, ques_token, target in tqdm(train_loader):
+        # for img_sample, ques_token, target in tqdm(train_loader):
             
             # print("Image file  size  : ",img_sample.shape)
             # print("Question token: ",ques_token.shape)
@@ -101,21 +102,24 @@ def main(args):
             loss = criterion(class_outputs, target)
             loss.backward()
             nn.utils.clip_grad_norm_(fusion_network.parameters(), 0.25)
-            print("Prinintng whole network parameters")
-            print(list(fusion_network.parameters())[-1].grad.data.norm(2).item())
-            input()
+            # print("Prinintng whole network parameters")
+            # print(list(fusion_network.parameters())[-1].grad.data.norm(2).item())
+            # input()
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
-            if(step%20==0):
+            if(step%1==0):
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, step, total_step, loss.item())) 
             step+=1
+        
         epoch_loss=running_loss/len(train_dataset)
         print("Train Epoch Loss: ",epoch_loss)
         val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
         string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
         string+='Accuracy : {}\n'.format(accuracy)
+        print(string)
+        input()
         logger.write(string)
 #        savemodel(image_model,device,"image_model")
 #        savemodel(question_encoder,device,"question_encoder")
