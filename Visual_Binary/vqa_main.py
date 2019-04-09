@@ -52,7 +52,7 @@ def main(args):
     # Loss and optimizer
     criterion = nn.NLLLoss()
     # params = list(image_model.parameters())+list(question_encoder.parameters()) + list(fusion_network.parameters()) 
-    optimizer = torch.optim.RMSprop(fusion_network.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adamax(fusion_network.parameters(), lr=args.learning_rate)
     
     # Train the models
     total_step = len(train_loader)
@@ -101,13 +101,9 @@ def main(args):
             optimizer.zero_grad()
             class_outputs=fusion_network(question_tokens,image_feats)
             print(class_outputs.shape)
-#            loss = nn.functional.binary_cross_entropy_with_logits(class_outputs,target)
             loss = criterion(class_outputs, target)
             loss.backward()
             nn.utils.clip_grad_norm_(fusion_network.parameters(), 0.25)
-            # print("Prinintng whole network parameters")
-            # print(list(fusion_network.parameters())[-1].grad.data.norm(2).item())
-            # input()
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
@@ -120,6 +116,9 @@ def main(args):
         print("Train Epoch Loss: ",epoch_loss)
         for ps,t in zip(class_outputs,target):
             print("Output {} : {}".format(torch.argmax(torch.exp(ps)),t))
+        equality= (target.data == torch.argmax(torch.exp(class_outputs))[1])
+        accuracy+=equality.type(torch.FloatTensor).mean()
+        print("Accuracy: ",accuracy)    
         #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
         #string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
         #string+='Accuracy : {}\n'.format(accuracy)
@@ -144,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument('--q_embed',type=int, default=1024, help='embedding output of the encoder RNN')
     parser.add_argument('--fuse_embed',type=int, default=512, help='Overall embedding size of the fused network')
     parser.add_argument('--num_class',type=int, default=2, help='Number of output classes')
-    parser.add_argument('--learning_rate',type=float,default=0.001,help='Learning rate')
+    parser.add_argument('--learning_rate',type=float,default=2*0.001,help='Learning rate')
     args = parser.parse_args()
     main(args)
 
