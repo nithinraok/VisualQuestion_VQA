@@ -61,6 +61,7 @@ def main(args):
         print("Evaluating Validation Loader")
         loss=0
         accuracy=0
+        count=0
         with torch.no_grad():
             for image_sample,question_token,labels in iter(train_loader):
                 image_sample,question_token,labels = image_sample.to(device),question_token.to(device),labels.to(device)
@@ -71,8 +72,9 @@ def main(args):
                 loss+= criterion(output,labels).item()
 
                 equality= (labels.data == ps.max(dim=1)[1])
-                accuracy+=equality.type(torch.FloatTensor).mean()
-        return loss,accuracy
+                accuracy+=equality.type(torch.FloatTensor).sum()
+                count=count+len(labels)
+        return loss,(accuracy/count)*100
     
     logger=open('train_loss_log.txt','w')
     loss_save=[]
