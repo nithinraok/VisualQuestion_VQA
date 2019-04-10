@@ -76,7 +76,7 @@ def main(args):
     
     logger=open('train_loss_log.txt','w')
     loss_save=[]
-    img_sample, ques_token, target=next(iter(train_loader))
+#    img_sample, ques_token, target=next(iter(train_loader))
 
     #Training starts
     fusion_network.to(device) 
@@ -86,9 +86,7 @@ def main(args):
         step=0
             
         #print("Val Loss: {} Accuracy :{} ".format(val_loss,accuracy))
-        #for img_sample, ques_token, target in tqdm(train_loader):
-        #for img_sample, ques_token, target in img_sample, ques_token, target:    
-        for i in range(1):
+        for img_sample, ques_token, target in tqdm(train_loader):
             # print("Image file  size  : ",img_sample.shape)
             # print("Question token: ",ques_token.shape)
             # print("target :",target)
@@ -100,30 +98,25 @@ def main(args):
             # #Forward, Backward and Optimize
             optimizer.zero_grad()
             class_outputs=fusion_network(question_tokens,image_feats)
-            print(class_outputs.shape)
             loss = criterion(class_outputs, target)
             loss.backward()
             nn.utils.clip_grad_norm_(fusion_network.parameters(), 0.25)
             optimizer.step()
 
             running_loss+=loss.item()*image_feats.size(0)
-            if(step%1==0):
+            if(step%20==0):
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch, args.epochs, step, total_step, loss.item())) 
             step+=1
         
         epoch_loss=running_loss/len(train_dataset)
         print("Train Epoch Loss: ",epoch_loss)
-        for ps,t in zip(class_outputs,target):
-            print("Output {} : {}".format(torch.argmax(torch.exp(ps)),t))
-        equality= (target.data == torch.argmax(torch.exp(class_outputs))[1])
-        accuracy+=equality.type(torch.FloatTensor).mean()
-        print("Accuracy: ",accuracy)    
-        #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
-        #string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
-        #string+='Accuracy : {}\n'.format(accuracy)
-        #print(string)
-        #logger.write(string)
+        
+        val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
+        string='Epoch {}:{} loss: {} \t'.format(epoch,args.epochs,val_loss)
+        string+='Accuracy : {}\n'.format(accuracy)
+        print(string)
+        logger.write(string)
 #        savemodel(image_model,device,"image_model")
 #        savemodel(question_encoder,device,"question_encoder")
         savemodel(fusion_network,device,"fusion_network")
