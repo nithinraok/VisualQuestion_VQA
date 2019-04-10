@@ -51,8 +51,8 @@ for data_sample in tqdm(valid_dataset):
 
 #valid_questions_dict={}
 #valid_questions_dict['questions']=val_questions
-with open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/validation_target_top_1000_ans.pkl', 'w') as fp:
-    json.dump(valid_dataset, fp)
+with open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/validation_target_top_1000_ans.pkl','wb') as fp:
+    pickle.dump(valid_dataset, fp)
 
 
 
