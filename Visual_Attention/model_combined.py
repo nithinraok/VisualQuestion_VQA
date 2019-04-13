@@ -1,11 +1,15 @@
+import sys
+sys.path.insert(0, '/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All')
 import torch
 import torch.nn as nn
 from attention_models import Base_Att
 from language_models import WordEmbedding, QuestionEmbedding
 from classifier_models import SimpleClassifier, ClassifierAdv
 from fc import FCNet, GTH
-from Visual_All import dataset_vqa
+import dataset_vqa
 from dataset_vqa import Dictionary, VQAFeatureDataset
+from dataset_image_vqa import VQADataset
+import torchvision.transforms as transforms
 # Dropout p: probability of an element to be zeroed. Default: 0.5
 
 """
@@ -43,6 +47,46 @@ class VQA_Model(nn.Module):
         logits = self.classifier(joint_repr)
         return logits
 
+
+
+def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C):
+    w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
+    q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=False, dropout=drop_G, rnn_type='GRU')
+
+    v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, norm= norm, act= activation)
+    q_net = FCNet([num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+    v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+
+    classifier = SimpleClassifier(
+        in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+    return VQA_Model(w_emb, q_emb, v_att, q_net, v_net, classifier)
+
+
+
 if __name__ == "__main__":
-    dictionary=Dictionary.load_from_file('Visual_All/data/dictionary.pkl')
+    dictionary=Dictionary.load_from_file('../Visual_All/data/dictionary.pkl')
+    num_hid=1024
+    dropout=0.3
+    dropout_L=0.1
+    dropout_G=0.2
+    dropout_W=0.4
+    dropout_C=0.5
+    activation='ReLU'
+    norm='weight'
+    crop_size=224
+    train_transform = transforms.Compose([ 
+        transforms.Resize((crop_size,crop_size)),
+        transforms.ToTensor(), 
+        transforms.Normalize((0.485, 0.456, 0.406), 
+                             (0.229, 0.224, 0.225))])
+    
+    img_root_dir="/data/digbose92/VQA/COCO"
+    data_root_dir="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
+    train_dataset = VQADataset(image_root_dir=img_root_dir,dictionary=dictionary,dataroot=data_root_dir,choice='train',transform_set=train_transform)
+
+    model = attention_baseline(train_dataset, num_hid=num_hid, dropout= dropout, norm=norm,\
+                               activation=activation, drop_L=dropout_L, drop_G=dropout_G,\
+                               drop_W=dropout_W, drop_C=dropout_C)
+
+    print(model)
     
