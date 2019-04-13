@@ -11,7 +11,6 @@ from dataset_vqa import Dictionary, VQAFeatureDataset
 from dataset_image_vqa import VQADataset
 import torchvision.transforms as transforms
 # Dropout p: probability of an element to be zeroed. Default: 0.5
-
 """
 Batch size first is required for all the images
 """
