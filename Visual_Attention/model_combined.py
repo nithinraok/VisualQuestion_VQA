@@ -24,11 +24,10 @@ class VQA_Model(nn.Module):
         self.v_net = v_net
         self.classifier = classifier
 
-    def forward(self, v, b, q, labels):
+    def forward(self, v, q, labels):
         """Forward
 
         v: [batch, num_objs, obj_dim]
-        b: [batch, num_objs, b_dim]
         q: [batch_size, seq_length]
 
         return: logits, not probs
@@ -60,6 +59,22 @@ def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , dro
         in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
     return VQA_Model(w_emb, q_emb, v_att, q_net, v_net, classifier)
 
+def weights_init_xn(m):
+    if isinstance(m, nn.Linear):
+        nn.init.xavier_normal(m.weight.data)
+        nn.init.xavier_normal(m.bias.data)
+def weights_init_xu(m):
+    if isinstance(m, nn.Linear):
+        nn.init.xavier_uniform(m.weight.data)
+        nn.init.xavier_uniform(m.bias.data)
+
+# a=0.01 for Leaky RelU
+def weights_init_kn(m):
+    if isinstance(m, nn.Linear):
+        nn.init.kaiming_normal(m.weight.data, a=0.01)
+def weights_init_ku(m):
+    if isinstance(m, nn.Linear):
+        nn.init.kaiming_uniform(m.weight.data, a=0.01)
 
 
 if __name__ == "__main__":

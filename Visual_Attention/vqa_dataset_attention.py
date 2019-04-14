@@ -18,6 +18,7 @@ from models import *
 from tqdm import tqdm
 import time
 import h5py
+
 def _create_entry(question, answer):
     answer.pop('image_id')
     answer.pop('question_id')
@@ -51,7 +52,7 @@ def _load_dataset(dataroot,name):
 class Dataset_VQA(Dataset):
     """Dataset for VQA applied to the attention case with image features in .hdf5 file 
     """
-    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
+    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,num_classes=1000,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
 
         #initializations
         self.data_root=dataroot
@@ -59,11 +60,12 @@ class Dataset_VQA(Dataset):
         self.img_dir=os.path.join(img_root_dir,choice+"2014")
         self.choice=choice
         self.transform=transform_set
-        
+        self.num_classes=num_classes
         self.dictionary=dictionary
         self.arch=arch_choice 
         self.layer_option=layer_option 
         self.filename_len=filename_len
+        self.num_ans_candidates=num_classes
         #operations (reading features and making the entries)
         #train_filenames_resnet152.txt
         #reading the features
@@ -80,7 +82,8 @@ class Dataset_VQA(Dataset):
         end_time=time.time()
         elapsed_time=end_time-start_time
         print('Total elapsed time: %f' %(elapsed_time))
-
+        
+        self.v_dim = 7
         self.entries=_load_dataset(self.data_root,self.choice)
         self.tokenize()
         self.tensorize()
@@ -137,7 +140,10 @@ class Dataset_VQA(Dataset):
         idx=self.file_list.index(os.path.join(self.img_dir,filename))
         
         feat=torch.from_numpy(self.features.numpy()[idx])
-        return(feat,question,label)
+        target = torch.zeros(self.num_classes)
+        if label is not None:
+            target.scatter_(0,label,1)
+        return(feat,question,label,target)
 
     def __len__(self):
         return(len(self.entries))
@@ -148,11 +154,12 @@ if __name__ == "__main__":
     dictionary=Dictionary.load_from_file('../Visual_All/data/dictionary.pkl')
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
-    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,dataroot=data_root,arch_choice="vgg16",layer_option="embedding")
+    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,dataroot=data_root,arch_choice="resnet152",layer_option="pool")
     train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True, num_workers=1)
 
-    feat,question,label=next(iter(train_loader))
+    feat,question,label,target=next(iter(train_loader))
 
     print(feat.shape)
     print(question)
     print(label)
+    print(target)
