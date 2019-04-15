@@ -22,7 +22,10 @@ class Base_Att(nn.Module):
     def logits(self, v, q):
         num_objs = v.size(1)
         q = q.unsqueeze(1).repeat(1, num_objs, 1)
+        print(q.size())
+        print(v.size())
         vq = torch.cat((v, q), 2)
+        print(vq.size())
         joint_repr = self.nonlinear(vq)
         logits = self.linear(joint_repr)
         return logits

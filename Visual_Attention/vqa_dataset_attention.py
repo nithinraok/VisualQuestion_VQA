@@ -76,17 +76,19 @@ class Dataset_VQA(Dataset):
         fl_p=open(file_path)
         self.file_list=list(fl_p.readlines())
         self.file_list=[filename.split("\n")[0] for filename in self.file_list]
-        
-        with h5py.File(h5_path, 'r') as hf:
-            self.features = np.array(hf.get('feats'))
+        hf=h5py.File(h5_path)
+        self.features=hf.get('feats')
+        #with h5py.File(h5_path, 'r') as hf:
+        #    self.features = np.array(hf.get('feats'))
         end_time=time.time()
         elapsed_time=end_time-start_time
         print('Total elapsed time: %f' %(elapsed_time))
         
-        self.v_dim = 7
+        #self.v_dim = 7
         self.entries=_load_dataset(self.data_root,self.choice)
         self.tokenize()
         self.tensorize()
+        self.v_dim=2048
 
     def tokenize(self, max_length=14):
         """Tokenizes the questions.
@@ -105,7 +107,7 @@ class Dataset_VQA(Dataset):
             entry['q_token'] = tokens
 
     def tensorize(self):
-        self.features = torch.from_numpy(self.features)
+        #self.features = torch.from_numpy(self.features)
         #self.spatials = torch.from_numpy(self.spatials)
 
         for entry in self.entries:
@@ -139,7 +141,9 @@ class Dataset_VQA(Dataset):
         filename='COCO_'+self.choice+'2014_'+str(image_id).zfill(self.filename_len)+'.jpg'
         idx=self.file_list.index(os.path.join(self.img_dir,filename))
         
-        feat=torch.from_numpy(self.features.numpy()[idx])
+        feat=torch.from_numpy(self.features[idx])
+        feat=feat.view(feat.size(0),feat.size(1)*feat.size(2))
+        feat=feat.transpose(1,0)
         target = torch.zeros(self.num_classes)
         if label is not None:
             target.scatter_(0,label,1)

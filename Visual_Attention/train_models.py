@@ -66,11 +66,11 @@ if __name__ == '__main__':
     dictionary=Dictionary.load_from_file('../Visual_All/data/dictionary.pkl')
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
-    npy_file="./../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
+    npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
     seed = 0
     args = parse_args()
     #device_selection
-    device=0
+    device=1
     torch.cuda.set_device(device)
 
     if args.seed == 0:
@@ -107,7 +107,6 @@ if __name__ == '__main__':
     model.w_emb.init_embedding(npy_file)
 
     
-
     if args.optimizer == 'Adadelta':
         optim = torch.optim.Adadelta(model.parameters(), rho=0.95, eps=1e-6, weight_decay=args.weight_decay)
     elif args.optimizer == 'RMSprop':
@@ -117,6 +116,7 @@ if __name__ == '__main__':
     else:
         optim = torch.optim.Adamax(model.parameters(), weight_decay=args.weight_decay)
 
+    print('Starting training')
     for epoch in range(args.epochs):
         total_loss = 0
         train_score = 0
@@ -130,13 +130,14 @@ if __name__ == '__main__':
 
             pred = model(feat, quest, target)
             loss = instance_bce_with_logits(pred, target)
+            print(loss)
             loss.backward()
             nn.utils.clip_grad_norm(model.parameters(), 0.25)
             optim.step()
             optim.zero_grad()
 
             batch_score = compute_score_with_logits(pred, target.data).sum()
-            total_loss += loss.data[0] * feat.size(0)
+            total_loss += loss.item() * feat.size(0)
             train_score += batch_score
             if(step%10==0):
             #optimizer.zero_grad()

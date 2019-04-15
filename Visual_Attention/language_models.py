@@ -54,10 +54,10 @@ class QuestionEmbedding(nn.Module):
         if self.rnn_type == 'LSTM':
             #return (Variable(weight.new(*hid_shape).zero_()),
                     #Variable(weight.new(*hid_shape).zero_()))
-            return(torch.randn(hid_shape),torch.randn(hid_shape))
+            return(torch.randn(hid_shape).cuda(),torch.randn(hid_shape).cuda())
         else:
             #return Variable(weight.new(*hid_shape).zero_())
-            return(torch.randn(hid_shape))
+            return(torch.randn(hid_shape).cuda())
 
     def forward(self, x):
         # x: [batch, sequence, in_dim]
