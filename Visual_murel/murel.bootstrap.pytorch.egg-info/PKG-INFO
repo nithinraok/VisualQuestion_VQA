@@ -1,4 +1,4 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: murel.bootstrap.pytorch
 Version: 0.0.0
 Summary: MUREL: Multimodal Relational Reasoning for Visual Question Answering
@@ -338,3 +338,4 @@ Classifier: Intended Audience :: Developers
 Classifier: Topic :: Software Development :: Build Tools
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3.7
+Provides-Extra: test

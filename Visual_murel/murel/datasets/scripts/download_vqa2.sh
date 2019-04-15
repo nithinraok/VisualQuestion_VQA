@@ -1,7 +1,7 @@
-mkdir -p data/vqa
+#mkdir -p data/vqa
 cd data/vqa
-wget http://data.lip6.fr/cadene/block/vqa2.tar.gz
-wget http://data.lip6.fr/cadene/block/coco.tar.gz
+#wget http://data.lip6.fr/cadene/block/vqa2.tar.gz
+#wget http://data.lip6.fr/cadene/block/coco.tar.gz
 tar -xzvf vqa2.tar.gz
 tar -xzvf coco.tar.gz
 
