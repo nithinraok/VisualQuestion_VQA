@@ -1,0 +1,8 @@
+bootstrap.pytorch
+skipthoughts
+pretrainedmodels
+opencv-python
+block.bootstrap.pytorch
+
+[test]
+pytest
