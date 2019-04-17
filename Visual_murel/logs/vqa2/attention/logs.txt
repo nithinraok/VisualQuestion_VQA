@@ -1,0 +1,166 @@
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62: options: 
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   dataset:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     batch_size: 32
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir: data/vqa/vqa2
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_rcnn: data/vqa/coco/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_rcnn_vg: data/vqa/vgenome/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_vg: data/vqa/vgenome
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     eval_split: val
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     import: murel.datasets.factory
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     minwcount: 0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: vqa2
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nans: 3000
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nb_threads: 4
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nlp: mcb
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     proc_split: train
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     samplingans: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     train_split: train
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     vg: False
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   engine:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     debug: False
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: logger
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nb_epochs: 25
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     print_freq: 10
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     saving_criteria: ['eval_epoch.accuracy_top1:max']
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   exp:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir: logs/vqa2/attention
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     resume: None
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   misc:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     cuda: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     logs_name: None
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     seed: 1337
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   model:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     criterion:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.criterions.factory
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: vqa_cross_entropy
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     metric:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.metrics.factory
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: vqa_accuracies
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: default
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     network:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       agg:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         type: max
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       cell:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fusion:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           chunks: 20
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           mm_dim: 1000
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           output_dim: 2048
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           rank: 15
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           type: block
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         pairwise:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           agg:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: max
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           fusion_coord:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             chunks: 5
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             input_dims: [4, 4]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             rank: 5
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: block
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           fusion_feat:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             chunks: 5
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             input_dims: [2048, 2048]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             rank: 5
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: block
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           residual: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         residual: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       classif:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fusion:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           chunks: 20
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           mm_dim: 1600
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           output_dim: 2
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           rank: 10
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           type: block
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.networks.factory
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       n_step: 3
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: murel_net
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       self_q_att: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       shared: True
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       txt_enc:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         dir_st: data/skip-thoughts
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         dropout: 0.25
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fixed_emb: False
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         name: skipthoughts
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         type: BayesianUniSkip
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   optimizer:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     gradual_warmup_steps: [0.5, 2.0, 7.0]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     import: murel.optimizers.factory
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr: 0.0003
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr_decay_epochs: [14, 24, 2]
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr_decay_rate: 0.25
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: Adam
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   path_opts: murel/options/vqa2/murel.yaml
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   view:
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     items: ['logs:train_epoch.loss+logs:eval_epoch.loss', 'logs:train_epoch.accuracy_top1+logs:eval_epoch.accuracy_top1', 'logs_train_oe:train_epoch.overall+logs_val_oe:eval_epoch.overall']
+[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: plotly
+[I 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.63: posix.uname_result(sysname='Linux', nodename='torch-1-vm', release='4.9.0-8-amd64', version='#1 SMP Debian 4.9.130-2 (2018-10-27)', machine='x86_64')
+[I 2019-04-16 04:08:31] ...7.egg/bootstrap/run.py.67: Available GPUs: [0, 1]
+[I 2019-04-16 04:08:31] ...rap/engines/factory.py.8: Creating engine...
+[I 2019-04-16 04:08:31] ...ap/datasets/factory.py.8: Creating dataset...
+[I 2019-04-16 04:08:36] ...ap/datasets/factory.py.18: Training will take place on trainset (166881 items)
+[I 2019-04-16 04:08:36] ...ap/datasets/factory.py.21: Evaluation will take place on valset (80541 items)
+[I 2019-04-16 04:08:36] ...trap/models/factory.py.12: Creating model...
+[I 2019-04-16 04:08:36] ...ls/networks/factory.py.8: Creating network...
+[S 2019-04-16 04:08:44] ...networks/murel_cell.py.20: nb_params_fusion: 10430048
+[S 2019-04-16 04:08:44] ...s/networks/pairwise.py.33: nb_params_fusion: 495648
+[S 2019-04-16 04:08:44] ...s/networks/pairwise.py.35: nb_params_fusion: 1313248
+[S 2019-04-16 04:08:44] .../networks/murel_net.py.56: nb_params_fusion: 13555202
+[S 2019-04-16 04:08:44] ...ls/networks/factory.py.38: nparams: 57035324
+[S 2019-04-16 04:08:44] ...ls/networks/factory.py.38: nparams_txt_enc: 31241178
+[I 2019-04-16 04:08:44] .../criterions/factory.py.16: Creating criterion from bootstrap for train mode...
+[I 2019-04-16 04:08:44] .../criterions/factory.py.16: Creating criterion from bootstrap for eval mode...
+[I 2019-04-16 04:08:44] ...els/metrics/factory.py.14: Creating metric from bootstrap for train mode...
+[I 2019-04-16 04:08:45] ...els/metrics/factory.py.14: Creating metric from bootstrap for eval mode...
+[I 2019-04-16 04:08:48] ...strap/views/factory.py.7: Creating views...
+[I 2019-04-16 04:08:49] ...trap/engines/engine.py.113: Launching training procedures
+[I 2019-04-16 04:08:49] ...trap/engines/engine.py.151: Training model on trainset for epoch 0
+[I 2019-04-16 04:08:49] ...mizers/lr_scheduler.py.93: Gradual Warmup lr: 0.00030000 -> 0.00015000
+[I 2019-04-16 04:08:55] ...trap/engines/engine.py.211: train: epoch 0 | batch 0/5215
+[I 2019-04-16 04:08:55] ...trap/engines/engine.py.214:       elapsed: 0:00:05 | left: 7:52:50
+[I 2019-04-16 04:08:55] ...trap/engines/engine.py.215:       process: 5.44016 | load: 0.77046
+[I 2019-04-16 04:08:55] ...trap/engines/engine.py.216:       loss: 0.70478
+[I 2019-04-16 04:08:55] ...mizers/lr_scheduler.py.103:       norm: 1.93672
+[I 2019-04-16 04:09:06] ...trap/engines/engine.py.211: train: epoch 0 | batch 10/5215
+[I 2019-04-16 04:09:06] ...trap/engines/engine.py.214:       elapsed: 0:00:16 | left: 2:19:15
+[I 2019-04-16 04:09:06] ...trap/engines/engine.py.215:       process: 1.13382 | load: 0.00027
+[I 2019-04-16 04:09:06] ...trap/engines/engine.py.216:       loss: 0.73389
+[I 2019-04-16 04:09:06] ...mizers/lr_scheduler.py.103:       norm: 1.49157
+[I 2019-04-16 04:09:09] ...7.egg/bootstrap/run.py.120: Traceback (most recent call last):
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/run.py", line 113, in main
+    run(path_opts=path_opts)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/run.py", line 104, in run
+    engine.train()
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/engines/engine.py", line 117, in train
+    self.train_epoch(self.model, self.dataset['train'], self.optimizer, self.epoch)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/engines/engine.py", line 170, in train_epoch
+    out = model(batch)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/models/model.py", line 83, in forward
+    met_tmp = self.metrics[self.mode](cri_out, net_out, batch)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/nn/modules/module.py", line 489, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/block/models/metrics/vqa_accuracies.py", line 108, in forward
+    print(cri_out)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/tensor.py", line 66, in __repr__
+    return torch._tensor_str._str(self)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 277, in _str
+    tensor_str = _tensor_str(self, indent)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 195, in _tensor_str
+    formatter = _Formatter(get_summarized_data(self) if summarize else self)
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 84, in __init__
+    nonzero_finite_vals = torch.masked_select(tensor_view, torch.isfinite(tensor_view) & tensor_view.ne(0))
+RuntimeError: cuda runtime error (59) : device-side assert triggered at /pytorch/aten/src/THC/generated/../THCReduceAll.cuh:317
+ 3
