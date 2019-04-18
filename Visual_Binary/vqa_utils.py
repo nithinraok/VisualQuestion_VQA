@@ -46,26 +46,26 @@ def create_glove_embedding_init(idx2word, glove_file):
     return weights, word2emb
 
 def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames_dict,emb_dim=300):
+    if(0):
+        dictionary=create_dictionary(dataroot)
+        dictionary.dump_to_file(os.path.join('data',pkl_filename))
+        d = Dictionary.load_from_file((os.path.join('data',pkl_filename)))
+        print(d.idx2word)
+        weights, word2emb = create_glove_embedding_init(d.idx2word, glove_filename)
+        np.save('data/glove6b_init_%dd.npy' % emb_dim, weights)
 
-    dictionary=create_dictionary(dataroot)
-    dictionary.dump_to_file(os.path.join('data',pkl_filename))
-    d = Dictionary.load_from_file((os.path.join('data',pkl_filename)))
-    print(d.idx2word)
-    weights, word2emb = create_glove_embedding_init(d.idx2word, glove_filename)
-    np.save('data/glove6b_init_%dd.npy' % emb_dim, weights)
+        #extract the raw data from json
+        train_questions = json.load(open(filenames_dict['train_question_file']))['questions']
+        train_answers = json.load(open(filenames_dict['train_answer_file']))['annotations']
+        validation_questions = json.load(open(filenames_dict['validation_question_file']))['questions']
+        validation_answers = json.load(open(filenames_dict['validation_answer_file']))['annotations']
 
-    #extract the raw data from json
-    train_questions = json.load(open(filenames_dict['train_question_file']))['questions']
-    train_answers = json.load(open(filenames_dict['train_answer_file']))['annotations']
-    validation_questions = json.load(open(filenames_dict['validation_question_file']))['questions']
-    validation_answers = json.load(open(filenames_dict['validation_answer_file']))['annotations']
-
-    #generate the question labels and the id maps 
-    answers = train_answers + validation_answers
-    occurence = filter_answers(answers, 9)
-    ans2label = create_ans2label(occurence, 'trainval')
-    train_target=compute_target(train_answers, ans2label, 'train')
-    validation_target=compute_target(validation_answers, ans2label, 'val')
+        #generate the question labels and the id maps 
+        answers = train_answers + validation_answers
+        occurence = filter_answers(answers, 9)
+        ans2label = create_ans2label(occurence, 'trainval')
+        train_target=compute_target(train_answers, ans2label, 'train')
+        validation_target=compute_target(validation_answers, ans2label, 'val')
 
 
     #image feature extraction here based on functions in image_feature_extractor
@@ -73,8 +73,8 @@ def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames
     get_question_imgid('data/','train')
     get_question_imgid('data/','val')
     get_questionid_question('data/')
-    get_imageid_path("data/train2017/",'train')
-    get_imageid_path("data/val2017/",'val')
+    get_imageid_path("data/train2014/",'train')
+    get_imageid_path("data/val2014/",'val')
 
 
 
@@ -83,11 +83,11 @@ if __name__ == "__main__":
     user="nithin_rao"
     if user=="nithin_rao":
         root_folder = "/Users/nithin_rao/MyFiles/MS/USC/Spring_2019/CSCI_599_DL/Project/"
-        root_folder = "~/CSCI
+        root_folder = "/home/nithin_rao/CSCI_599/"
     else:
         root_folder = "/data/digbose92"
         
-    dataroot=root_folder+"/VQA/questions_answers_binary"
+    dataroot=root_folder+"/VQA/questions_answers_binary_actual"
     pkl_file='dictionary.pkl'
     glove_filename=root_folder+"/VQA/glove_dataset/data/glove/glove.6B.300d.txt"
 
