@@ -34,7 +34,7 @@ class VQA_Model(nn.Module):
         """
         w_emb = self.w_emb(q)       # get word embeddings
         q_emb = self.q_emb(w_emb)   # run GRU on word embeddings [batch, q_dim]
-
+        #print(q_emb.size())
 
         att = self.v_att(v, q_emb) # [batch, 1, v_dim]
         v_emb = (att * v).sum(1) # [batch, v_dim]
@@ -45,18 +45,20 @@ class VQA_Model(nn.Module):
         logits = self.classifier(joint_repr)
         return logits
 
-
-
-def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C):
+def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=True):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
-    q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=False, dropout=drop_G, rnn_type='GRU')
+    q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
 
-    v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, norm= norm, act= activation)
-    q_net = FCNet([num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+    v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, bidirect=bidirect_val,norm= norm, act= activation)
+    if(bidirect_val is False):
+        q_net = FCNet([num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        #v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+    else:
+        q_net = FCNet([2*num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        
     v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
-
-    classifier = SimpleClassifier(
-        in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+    classifier = SimpleClassifier(in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+   
     return VQA_Model(w_emb, q_emb, v_att, q_net, v_net, classifier)
 
 def weights_init_xn(m):

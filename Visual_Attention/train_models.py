@@ -24,7 +24,6 @@ from vqa_dataset_attention import *
 import torch.nn as nn
 import random
 import utils
-
 def instance_bce_with_logits(logits, labels):
     assert logits.dim() == 2
 
@@ -92,7 +91,7 @@ def single_batch_run(model,train_dataloader,valid_dataloader,device,output_folde
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval', action='store_true', help='set this to evaluate.')
-    parser.add_argument('--epochs', type=int, default=40)
+    parser.add_argument('--epochs', type=int, default=30)
     parser.add_argument('--num_hid', type=int, default=1024) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
@@ -105,7 +104,7 @@ def parse_args():
     parser.add_argument('--output', type=str, default='saved_models/')
     parser.add_argument('--batch_size', type=int, default=512)
     parser.add_argument('--weight_decay', type=float, default=0)
-    parser.add_argument('--optimizer', type=str, default='Adamax', help='Adam, Adamax, Adadelta, RMSprop')
+    parser.add_argument('--optimizer', type=str, default='Adam', help='Adam, Adamax, Adadelta, RMSprop')
     parser.add_argument('--initializer', type=str, default='kaiming_normal')
     parser.add_argument('--seed', type=int, default=9731, help='random seed')
     args = parser.parse_args()
@@ -118,7 +117,7 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_resnet_152_hid_1024_YES_NO_ADAM"
     seed = 0
     args = parse_args()
     #device_selection
@@ -137,11 +136,12 @@ if __name__ == '__main__':
         torch.manual_seed(args.seed)
         torch.cuda.manual_seed(args.seed)
     
+    
     #train dataset
     train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,choice='train',dataroot=data_root,arch_choice="resnet152",layer_option="pool")
     valid_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,choice='val',dataroot=data_root,arch_choice="resnet152",layer_option="pool")
     
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=10)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=12)
     val_loader=DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=8)
     print(len(train_loader))
     print(len(val_loader))
@@ -153,8 +153,8 @@ if __name__ == '__main__':
                                drop_W=args.dropout_W, drop_C=args.dropout_C)
 
     #model=model.to(device_select)
+    print(model)
     
-
     if args.initializer == 'xavier_normal':
         model.apply(weights_init_xn)
     elif args.initializer == 'xavier_uniform':
@@ -194,7 +194,7 @@ if __name__ == '__main__':
         correct = 0
         step=0
         start_time=time.time()
-        for i, (feat, quest, label, target) in enumerate(train_loader):
+        for i, (feat, quest, quest_sent, target) in enumerate(train_loader):
 
             feat = feat.to(device)
             quest = quest.to(device)
@@ -238,7 +238,7 @@ if __name__ == '__main__':
             model_path = os.path.join(output_folder, 'model.pth')
             torch.save(model.state_dict(), model_path)
             best_eval_score = eval_score
-        
+    
         
 
 

@@ -28,13 +28,12 @@ def _create_entry(question, answer):
         'question'    : question['question'],
         'answer'      : answer}
     return entry
-
 def _load_dataset(dataroot,name):
     question_path = os.path.join(
-        dataroot, 'v2_OpenEnded_mscoco_%s2014_1000_questions.json' % name)
+        dataroot, 'v2_OpenEnded_mscoco_%s2014_yes_no_questions.json' % name)
     questions = sorted(json.load(open(question_path))['questions'],
                        key=lambda x: x['question_id'])
-    answer_path = os.path.join(dataroot, '%s_target_top_1000_ans.pkl' % name)
+    answer_path = os.path.join(dataroot, '%s_target_yes_no_ans.pkl' % name)
     answers = cPickle.load(open(answer_path, 'rb'))
     answers = sorted(answers, key=lambda x: x['question_id'])
     utils.assert_eq(len(questions), len(answers))
@@ -52,7 +51,7 @@ def _load_dataset(dataroot,name):
 class Dataset_VQA(Dataset):
     """Dataset for VQA applied to the attention case with image features in .hdf5 file 
     """
-    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,num_classes=1000,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
+    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,num_classes=2,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
 
         #initializations
         self.data_root=dataroot
@@ -137,6 +136,7 @@ class Dataset_VQA(Dataset):
         answer_data=entry['answer']
         label=answer_data['Class_Label']
         image_id=entry['image_id']
+        question_sent=entry['question']
 
         filename='COCO_'+self.choice+'2014_'+str(image_id).zfill(self.filename_len)+'.jpg'
         idx=self.file_list.index(os.path.join(self.img_dir,filename))
@@ -147,7 +147,7 @@ class Dataset_VQA(Dataset):
         target = torch.zeros(self.num_classes)
         if label is not None:
             target.scatter_(0,label,1)
-        return(feat,question,label,target)
+        return(feat,question,question_sent,target)
 
     def __len__(self):
         return(len(self.entries))

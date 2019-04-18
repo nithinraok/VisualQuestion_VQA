@@ -66,7 +66,6 @@ class FCNet(nn.Module):
         layers.append(nn.Dropout(p=dropout))
 
         self.main = nn.Sequential(*layers)
-
     def forward(self, x):
         return self.main(x)
 

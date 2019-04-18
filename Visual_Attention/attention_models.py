@@ -4,10 +4,13 @@ from torch.nn.utils.weight_norm import weight_norm
 from fc import FCNet, GTH, get_norm
 # Default concat, 1 layer, output layer
 class Base_Att(nn.Module):
-    def __init__(self, v_dim, q_dim, num_hid, norm, act, dropout=0.0):
+    def __init__(self, v_dim, q_dim, num_hid, norm, act, bidirect=False,dropout=0.0):
         super(Base_Att, self).__init__()
         norm_layer = get_norm(norm)
-        self.nonlinear = FCNet([v_dim + q_dim, num_hid], dropout= dropout, norm= norm, act= act)
+        if(bidirect is False):
+            self.nonlinear = FCNet([v_dim + q_dim, num_hid], dropout= dropout, norm= norm, act= act)
+        else:
+            self.nonlinear = FCNet([v_dim + 2*q_dim, num_hid], dropout= dropout, norm= norm, act= act)
         self.linear = norm_layer(nn.Linear(num_hid, 1), dim=None)
 
     def forward(self, v, q):
