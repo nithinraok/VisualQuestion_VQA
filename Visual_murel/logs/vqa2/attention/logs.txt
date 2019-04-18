@@ -1,166 +1,873 @@
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62: options: 
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   dataset:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     batch_size: 32
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir: data/vqa/vqa2
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_rcnn: data/vqa/coco/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_rcnn_vg: data/vqa/vgenome/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir_vg: data/vqa/vgenome
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     eval_split: val
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     import: murel.datasets.factory
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     minwcount: 0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: vqa2
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nans: 3000
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nb_threads: 4
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nlp: mcb
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     proc_split: train
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     samplingans: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     train_split: train
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     vg: False
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   engine:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     debug: False
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: logger
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     nb_epochs: 25
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     print_freq: 10
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     saving_criteria: ['eval_epoch.accuracy_top1:max']
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   exp:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     dir: logs/vqa2/attention
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     resume: None
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   misc:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     cuda: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     logs_name: None
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     seed: 1337
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   model:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     criterion:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.criterions.factory
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: vqa_cross_entropy
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     metric:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.metrics.factory
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: vqa_accuracies
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: default
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     network:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       agg:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         type: max
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       cell:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fusion:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           chunks: 20
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           mm_dim: 1000
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           output_dim: 2048
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           rank: 15
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           type: block
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         pairwise:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           agg:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: max
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           fusion_coord:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             chunks: 5
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             input_dims: [4, 4]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             rank: 5
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: block
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           fusion_feat:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             chunks: 5
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             input_dims: [2048, 2048]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             rank: 5
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:             type: block
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           residual: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         residual: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       classif:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fusion:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           chunks: 20
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           mm_dim: 1600
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           output_dim: 2
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           rank: 10
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:           type: block
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       import: murel.models.networks.factory
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       n_step: 3
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       name: murel_net
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       self_q_att: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       shared: True
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:       txt_enc:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         dir_st: data/skip-thoughts
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         dropout: 0.25
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         fixed_emb: False
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         name: skipthoughts
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:         type: BayesianUniSkip
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   optimizer:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     gradual_warmup_steps: [0.5, 2.0, 7.0]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     import: murel.optimizers.factory
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr: 0.0003
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr_decay_epochs: [14, 24, 2]
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     lr_decay_rate: 0.25
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: Adam
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   path_opts: murel/options/vqa2/murel.yaml
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:   view:
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     items: ['logs:train_epoch.loss+logs:eval_epoch.loss', 'logs:train_epoch.accuracy_top1+logs:eval_epoch.accuracy_top1', 'logs_train_oe:train_epoch.overall+logs_val_oe:eval_epoch.overall']
-[S 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.62:     name: plotly
-[I 2019-04-16 04:08:28] ...7.egg/bootstrap/run.py.63: posix.uname_result(sysname='Linux', nodename='torch-1-vm', release='4.9.0-8-amd64', version='#1 SMP Debian 4.9.130-2 (2018-10-27)', machine='x86_64')
-[I 2019-04-16 04:08:31] ...7.egg/bootstrap/run.py.67: Available GPUs: [0, 1]
-[I 2019-04-16 04:08:31] ...rap/engines/factory.py.8: Creating engine...
-[I 2019-04-16 04:08:31] ...ap/datasets/factory.py.8: Creating dataset...
-[I 2019-04-16 04:08:36] ...ap/datasets/factory.py.18: Training will take place on trainset (166881 items)
-[I 2019-04-16 04:08:36] ...ap/datasets/factory.py.21: Evaluation will take place on valset (80541 items)
-[I 2019-04-16 04:08:36] ...trap/models/factory.py.12: Creating model...
-[I 2019-04-16 04:08:36] ...ls/networks/factory.py.8: Creating network...
-[S 2019-04-16 04:08:44] ...networks/murel_cell.py.20: nb_params_fusion: 10430048
-[S 2019-04-16 04:08:44] ...s/networks/pairwise.py.33: nb_params_fusion: 495648
-[S 2019-04-16 04:08:44] ...s/networks/pairwise.py.35: nb_params_fusion: 1313248
-[S 2019-04-16 04:08:44] .../networks/murel_net.py.56: nb_params_fusion: 13555202
-[S 2019-04-16 04:08:44] ...ls/networks/factory.py.38: nparams: 57035324
-[S 2019-04-16 04:08:44] ...ls/networks/factory.py.38: nparams_txt_enc: 31241178
-[I 2019-04-16 04:08:44] .../criterions/factory.py.16: Creating criterion from bootstrap for train mode...
-[I 2019-04-16 04:08:44] .../criterions/factory.py.16: Creating criterion from bootstrap for eval mode...
-[I 2019-04-16 04:08:44] ...els/metrics/factory.py.14: Creating metric from bootstrap for train mode...
-[I 2019-04-16 04:08:45] ...els/metrics/factory.py.14: Creating metric from bootstrap for eval mode...
-[I 2019-04-16 04:08:48] ...strap/views/factory.py.7: Creating views...
-[I 2019-04-16 04:08:49] ...trap/engines/engine.py.113: Launching training procedures
-[I 2019-04-16 04:08:49] ...trap/engines/engine.py.151: Training model on trainset for epoch 0
-[I 2019-04-16 04:08:49] ...mizers/lr_scheduler.py.93: Gradual Warmup lr: 0.00030000 -> 0.00015000
-[I 2019-04-16 04:08:55] ...trap/engines/engine.py.211: train: epoch 0 | batch 0/5215
-[I 2019-04-16 04:08:55] ...trap/engines/engine.py.214:       elapsed: 0:00:05 | left: 7:52:50
-[I 2019-04-16 04:08:55] ...trap/engines/engine.py.215:       process: 5.44016 | load: 0.77046
-[I 2019-04-16 04:08:55] ...trap/engines/engine.py.216:       loss: 0.70478
-[I 2019-04-16 04:08:55] ...mizers/lr_scheduler.py.103:       norm: 1.93672
-[I 2019-04-16 04:09:06] ...trap/engines/engine.py.211: train: epoch 0 | batch 10/5215
-[I 2019-04-16 04:09:06] ...trap/engines/engine.py.214:       elapsed: 0:00:16 | left: 2:19:15
-[I 2019-04-16 04:09:06] ...trap/engines/engine.py.215:       process: 1.13382 | load: 0.00027
-[I 2019-04-16 04:09:06] ...trap/engines/engine.py.216:       loss: 0.73389
-[I 2019-04-16 04:09:06] ...mizers/lr_scheduler.py.103:       norm: 1.49157
-[I 2019-04-16 04:09:09] ...7.egg/bootstrap/run.py.120: Traceback (most recent call last):
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62: options: 
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:   dataset:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     batch_size: 64
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     dir: data/vqa/vqa2
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     dir_rcnn: data/vqa/coco/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     dir_rcnn_vg: data/vqa/vgenome/extract_rcnn/2018-04-27_bottom-up-attention_fixed_36
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     dir_vg: data/vqa/vgenome
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     eval_split: val
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     import: murel.datasets.factory
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     minwcount: 0
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     name: vqa2
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     nans: 3000
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     nb_threads: 4
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     nlp: mcb
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     proc_split: train
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     samplingans: True
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     train_split: train
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     vg: False
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:   engine:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     debug: False
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     name: logger
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     nb_epochs: 25
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     print_freq: 10
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     saving_criteria: ['eval_epoch.accuracy_top1:max']
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:   exp:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     dir: logs/vqa2/attention
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     resume: None
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:   misc:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     cuda: True
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     logs_name: None
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     seed: 1337
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:   model:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     criterion:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       import: murel.models.criterions.factory
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       name: vqa_cross_entropy
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     metric:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       import: murel.models.metrics.factory
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       name: vqa_accuracies
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     name: default
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:     network:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       agg:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:         type: max
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:       cell:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:         fusion:
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           chunks: 20
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           mm_dim: 1000
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           output_dim: 2048
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           rank: 15
+[S 2019-04-17 05:56:12] ...7.egg/bootstrap/run.py.62:           type: block
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         pairwise:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           agg:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             type: max
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           fusion_coord:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             chunks: 5
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             input_dims: [4, 4]
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             rank: 5
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             type: block
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           fusion_feat:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             chunks: 5
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             dropout_input: 0.0
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             dropout_pre_lin: 0.0
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             input_dims: [2048, 2048]
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             mm_dim: 200
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             output_dim: 2048
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             rank: 5
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:             type: block
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           residual: True
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         residual: True
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       classif:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         fusion:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           chunks: 20
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           dropout_input: 0.1
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           dropout_pre_lin: 0.0
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           input_dims: [4800, 2048]
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           mm_dim: 1600
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           output_dim: 3000
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           rank: 10
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:           type: block
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       import: murel.models.networks.factory
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       n_step: 3
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       name: murel_net
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       self_q_att: True
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       shared: True
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:       txt_enc:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         dir_st: data/skip-thoughts
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         dropout: 0.25
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         fixed_emb: False
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         name: skipthoughts
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:         type: BayesianUniSkip
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:   optimizer:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     gradual_warmup_steps: [0.5, 2.0, 7.0]
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     import: murel.optimizers.factory
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     lr: 0.0003
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     lr_decay_epochs: [14, 24, 2]
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     lr_decay_rate: 0.25
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     name: Adam
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:   path_opts: murel/options/vqa2/murel.yaml
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:   view:
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     items: ['logs:train_epoch.loss+logs:eval_epoch.loss', 'logs:train_epoch.accuracy_top1+logs:eval_epoch.accuracy_top1', 'logs_train_oe:train_epoch.overall+logs_val_oe:eval_epoch.overall']
+[S 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.62:     name: plotly
+[I 2019-04-17 05:56:13] ...7.egg/bootstrap/run.py.63: posix.uname_result(sysname='Linux', nodename='torch-1-vm', release='4.9.0-8-amd64', version='#1 SMP Debian 4.9.130-2 (2018-10-27)', machine='x86_64')
+[I 2019-04-17 05:56:14] ...7.egg/bootstrap/run.py.67: Available GPUs: [0, 1]
+[I 2019-04-17 05:56:14] ...rap/engines/factory.py.8: Creating engine...
+[I 2019-04-17 05:56:14] ...ap/datasets/factory.py.8: Creating dataset...
+[I 2019-04-17 05:56:31] ...ap/datasets/factory.py.18: Training will take place on trainset (413036 items)
+[I 2019-04-17 05:56:31] ...ap/datasets/factory.py.21: Evaluation will take place on valset (214354 items)
+[I 2019-04-17 05:56:31] ...trap/models/factory.py.12: Creating model...
+[I 2019-04-17 05:56:31] ...ls/networks/factory.py.8: Creating network...
+[S 2019-04-17 05:56:53] ...networks/murel_cell.py.20: nb_params_fusion: 10430048
+[S 2019-04-17 05:56:53] ...s/networks/pairwise.py.33: nb_params_fusion: 495648
+[S 2019-04-17 05:56:53] ...s/networks/pairwise.py.35: nb_params_fusion: 1313248
+[S 2019-04-17 05:56:54] .../networks/murel_net.py.56: nb_params_fusion: 18355000
+[S 2019-04-17 05:56:54] ...ls/networks/factory.py.38: nparams: 61835122
+[S 2019-04-17 05:56:54] ...ls/networks/factory.py.38: nparams_txt_enc: 31241178
+[I 2019-04-17 05:56:54] .../criterions/factory.py.16: Creating criterion from bootstrap for train mode...
+[I 2019-04-17 05:56:54] .../criterions/factory.py.16: Creating criterion from bootstrap for eval mode...
+[I 2019-04-17 05:56:54] ...els/metrics/factory.py.14: Creating metric from bootstrap for train mode...
+[I 2019-04-17 05:56:58] ...els/metrics/factory.py.14: Creating metric from bootstrap for eval mode...
+[I 2019-04-17 05:57:17] ...strap/views/factory.py.7: Creating views...
+[I 2019-04-17 05:57:23] ...trap/engines/engine.py.113: Launching training procedures
+[I 2019-04-17 05:57:23] ...trap/engines/engine.py.151: Training model on trainset for epoch 0
+[I 2019-04-17 05:57:23] ...mizers/lr_scheduler.py.93: Gradual Warmup lr: 0.00030000 -> 0.00015000
+[I 2019-04-17 05:57:34] ...trap/engines/engine.py.211: train: epoch 0 | batch 0/6453
+[I 2019-04-17 05:57:34] ...trap/engines/engine.py.214:       elapsed: 0:00:11 | left: 20:54:42
+[I 2019-04-17 05:57:34] ...trap/engines/engine.py.215:       process: 11.66632 | load: 5.64165
+[I 2019-04-17 05:57:34] ...trap/engines/engine.py.216:       loss: 7.99362
+[I 2019-04-17 05:57:34] ...mizers/lr_scheduler.py.103:       norm: 2.24810
+[I 2019-04-17 05:57:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 10/6453
+[I 2019-04-17 05:57:39] ...trap/engines/engine.py.214:       elapsed: 0:00:16 | left: 3:13:20
+[I 2019-04-17 05:57:39] ...trap/engines/engine.py.215:       process: 0.63698 | load: 0.24101
+[I 2019-04-17 05:57:39] ...trap/engines/engine.py.216:       loss: 7.12471
+[I 2019-04-17 05:57:39] ...mizers/lr_scheduler.py.103:       norm: 1.79026
+[I 2019-04-17 05:57:51] ...trap/engines/engine.py.211: train: epoch 0 | batch 20/6453
+[I 2019-04-17 05:57:51] ...trap/engines/engine.py.214:       elapsed: 0:00:28 | left: 2:19:51
+[I 2019-04-17 05:57:51] ...trap/engines/engine.py.215:       process: 2.08732 | load: 1.70404
+[I 2019-04-17 05:57:51] ...trap/engines/engine.py.216:       loss: 6.78716
+[I 2019-04-17 05:57:51] ...mizers/lr_scheduler.py.103:       norm: 1.70633
+[I 2019-04-17 05:58:02] ...trap/engines/engine.py.211: train: epoch 0 | batch 30/6453
+[I 2019-04-17 05:58:02] ...trap/engines/engine.py.214:       elapsed: 0:00:39 | left: 2:09:26
+[I 2019-04-17 05:58:02] ...trap/engines/engine.py.215:       process: 2.18228 | load: 1.78279
+[I 2019-04-17 05:58:02] ...trap/engines/engine.py.216:       loss: 6.65079
+[I 2019-04-17 05:58:02] ...mizers/lr_scheduler.py.103:       norm: 1.61757
+[I 2019-04-17 05:58:11] ...trap/engines/engine.py.211: train: epoch 0 | batch 40/6453
+[I 2019-04-17 05:58:11] ...trap/engines/engine.py.214:       elapsed: 0:00:48 | left: 1:47:03
+[I 2019-04-17 05:58:11] ...trap/engines/engine.py.215:       process: 1.01909 | load: 0.61148
+[I 2019-04-17 05:58:11] ...trap/engines/engine.py.216:       loss: 6.49907
+[I 2019-04-17 05:58:11] ...mizers/lr_scheduler.py.103:       norm: 1.58178
+[I 2019-04-17 05:58:21] ...trap/engines/engine.py.211: train: epoch 0 | batch 50/6453
+[I 2019-04-17 05:58:21] ...trap/engines/engine.py.214:       elapsed: 0:00:58 | left: 1:52:24
+[I 2019-04-17 05:58:21] ...trap/engines/engine.py.215:       process: 1.78615 | load: 1.37780
+[I 2019-04-17 05:58:21] ...trap/engines/engine.py.216:       loss: 6.38120
+[I 2019-04-17 05:58:21] ...mizers/lr_scheduler.py.103:       norm: 1.54226
+[I 2019-04-17 05:58:30] ...trap/engines/engine.py.211: train: epoch 0 | batch 60/6453
+[I 2019-04-17 05:58:30] ...trap/engines/engine.py.214:       elapsed: 0:01:07 | left: 1:30:54
+[I 2019-04-17 05:58:30] ...trap/engines/engine.py.215:       process: 0.37236 | load: 0.00018
+[I 2019-04-17 05:58:30] ...trap/engines/engine.py.216:       loss: 5.66342
+[I 2019-04-17 05:58:30] ...mizers/lr_scheduler.py.103:       norm: 1.51486
+[I 2019-04-17 05:58:40] ...trap/engines/engine.py.211: train: epoch 0 | batch 70/6453
+[I 2019-04-17 05:58:40] ...trap/engines/engine.py.214:       elapsed: 0:01:17 | left: 1:54:49
+[I 2019-04-17 05:58:40] ...trap/engines/engine.py.215:       process: 2.18035 | load: 1.75891
+[I 2019-04-17 05:58:40] ...trap/engines/engine.py.216:       loss: 5.52943
+[I 2019-04-17 05:58:40] ...mizers/lr_scheduler.py.103:       norm: 1.49284
+[I 2019-04-17 05:58:50] ...trap/engines/engine.py.211: train: epoch 0 | batch 80/6453
+[I 2019-04-17 05:58:50] ...trap/engines/engine.py.214:       elapsed: 0:01:26 | left: 1:48:27
+[I 2019-04-17 05:58:50] ...trap/engines/engine.py.215:       process: 0.39448 | load: 0.00008
+[I 2019-04-17 05:58:50] ...trap/engines/engine.py.216:       loss: 5.11733
+[I 2019-04-17 05:58:50] ...mizers/lr_scheduler.py.103:       norm: 1.46566
+[I 2019-04-17 05:58:59] ...trap/engines/engine.py.211: train: epoch 0 | batch 90/6453
+[I 2019-04-17 05:58:59] ...trap/engines/engine.py.214:       elapsed: 0:01:36 | left: 1:42:12
+[I 2019-04-17 05:58:59] ...trap/engines/engine.py.215:       process: 1.39638 | load: 1.02371
+[I 2019-04-17 05:58:59] ...trap/engines/engine.py.216:       loss: 4.85344
+[I 2019-04-17 05:58:59] ...mizers/lr_scheduler.py.103:       norm: 1.45163
+[I 2019-04-17 05:59:08] ...trap/engines/engine.py.211: train: epoch 0 | batch 100/6453
+[I 2019-04-17 05:59:08] ...trap/engines/engine.py.214:       elapsed: 0:01:45 | left: 1:35:37
+[I 2019-04-17 05:59:08] ...trap/engines/engine.py.215:       process: 0.39663 | load: 0.00020
+[I 2019-04-17 05:59:08] ...trap/engines/engine.py.216:       loss: 5.27307
+[I 2019-04-17 05:59:08] ...mizers/lr_scheduler.py.103:       norm: 1.42310
+[I 2019-04-17 05:59:17] ...trap/engines/engine.py.211: train: epoch 0 | batch 110/6453
+[I 2019-04-17 05:59:17] ...trap/engines/engine.py.214:       elapsed: 0:01:54 | left: 1:35:30
+[I 2019-04-17 05:59:17] ...trap/engines/engine.py.215:       process: 1.38217 | load: 0.98325
+[I 2019-04-17 05:59:17] ...trap/engines/engine.py.216:       loss: 4.82540
+[I 2019-04-17 05:59:17] ...mizers/lr_scheduler.py.103:       norm: 1.40439
+[I 2019-04-17 05:59:26] ...trap/engines/engine.py.211: train: epoch 0 | batch 120/6453
+[I 2019-04-17 05:59:26] ...trap/engines/engine.py.214:       elapsed: 0:02:03 | left: 1:39:04
+[I 2019-04-17 05:59:26] ...trap/engines/engine.py.215:       process: 0.39737 | load: 0.00009
+[I 2019-04-17 05:59:26] ...trap/engines/engine.py.216:       loss: 4.89668
+[I 2019-04-17 05:59:26] ...mizers/lr_scheduler.py.103:       norm: 1.38099
+[I 2019-04-17 05:59:35] ...trap/engines/engine.py.211: train: epoch 0 | batch 130/6453
+[I 2019-04-17 05:59:35] ...trap/engines/engine.py.214:       elapsed: 0:02:12 | left: 1:21:29
+[I 2019-04-17 05:59:35] ...trap/engines/engine.py.215:       process: 0.39431 | load: 0.00025
+[I 2019-04-17 05:59:35] ...trap/engines/engine.py.216:       loss: 4.60996
+[I 2019-04-17 05:59:35] ...mizers/lr_scheduler.py.103:       norm: 1.35757
+[I 2019-04-17 05:59:44] ...trap/engines/engine.py.211: train: epoch 0 | batch 140/6453
+[I 2019-04-17 05:59:44] ...trap/engines/engine.py.214:       elapsed: 0:02:21 | left: 1:38:26
+[I 2019-04-17 05:59:44] ...trap/engines/engine.py.215:       process: 0.38776 | load: 0.00022
+[I 2019-04-17 05:59:44] ...trap/engines/engine.py.216:       loss: 3.84243
+[I 2019-04-17 05:59:44] ...mizers/lr_scheduler.py.103:       norm: 1.33909
+[I 2019-04-17 05:59:52] ...trap/engines/engine.py.211: train: epoch 0 | batch 150/6453
+[I 2019-04-17 05:59:52] ...trap/engines/engine.py.214:       elapsed: 0:02:29 | left: 1:13:44
+[I 2019-04-17 05:59:52] ...trap/engines/engine.py.215:       process: 0.38057 | load: 0.00013
+[I 2019-04-17 05:59:52] ...trap/engines/engine.py.216:       loss: 4.29974
+[I 2019-04-17 05:59:52] ...mizers/lr_scheduler.py.103:       norm: 1.31150
+[I 2019-04-17 06:00:01] ...trap/engines/engine.py.211: train: epoch 0 | batch 160/6453
+[I 2019-04-17 06:00:01] ...trap/engines/engine.py.214:       elapsed: 0:02:38 | left: 1:31:20
+[I 2019-04-17 06:00:01] ...trap/engines/engine.py.215:       process: 0.81785 | load: 0.43170
+[I 2019-04-17 06:00:01] ...trap/engines/engine.py.216:       loss: 4.69959
+[I 2019-04-17 06:00:01] ...mizers/lr_scheduler.py.103:       norm: 1.28541
+[I 2019-04-17 06:00:08] ...trap/engines/engine.py.211: train: epoch 0 | batch 170/6453
+[I 2019-04-17 06:00:08] ...trap/engines/engine.py.214:       elapsed: 0:02:45 | left: 1:11:18
+[I 2019-04-17 06:00:08] ...trap/engines/engine.py.215:       process: 0.39661 | load: 0.00017
+[I 2019-04-17 06:00:08] ...trap/engines/engine.py.216:       loss: 4.45705
+[I 2019-04-17 06:00:08] ...mizers/lr_scheduler.py.103:       norm: 1.25547
+[I 2019-04-17 06:00:18] ...trap/engines/engine.py.211: train: epoch 0 | batch 180/6453
+[I 2019-04-17 06:00:18] ...trap/engines/engine.py.214:       elapsed: 0:02:55 | left: 1:33:56
+[I 2019-04-17 06:00:18] ...trap/engines/engine.py.215:       process: 0.38653 | load: 0.00020
+[I 2019-04-17 06:00:18] ...trap/engines/engine.py.216:       loss: 4.47085
+[I 2019-04-17 06:00:18] ...mizers/lr_scheduler.py.103:       norm: 1.22721
+[I 2019-04-17 06:00:25] ...trap/engines/engine.py.211: train: epoch 0 | batch 190/6453
+[I 2019-04-17 06:00:25] ...trap/engines/engine.py.214:       elapsed: 0:03:02 | left: 1:11:32
+[I 2019-04-17 06:00:25] ...trap/engines/engine.py.215:       process: 0.38324 | load: 0.00026
+[I 2019-04-17 06:00:25] ...trap/engines/engine.py.216:       loss: 3.65472
+[I 2019-04-17 06:00:25] ...mizers/lr_scheduler.py.103:       norm: 1.20250
+[I 2019-04-17 06:00:34] ...trap/engines/engine.py.211: train: epoch 0 | batch 200/6453
+[I 2019-04-17 06:00:34] ...trap/engines/engine.py.214:       elapsed: 0:03:11 | left: 1:28:04
+[I 2019-04-17 06:00:34] ...trap/engines/engine.py.215:       process: 0.68950 | load: 0.29619
+[I 2019-04-17 06:00:34] ...trap/engines/engine.py.216:       loss: 3.63771
+[I 2019-04-17 06:00:34] ...mizers/lr_scheduler.py.103:       norm: 1.17532
+[I 2019-04-17 06:00:41] ...trap/engines/engine.py.211: train: epoch 0 | batch 210/6453
+[I 2019-04-17 06:00:41] ...trap/engines/engine.py.214:       elapsed: 0:03:18 | left: 1:18:20
+[I 2019-04-17 06:00:41] ...trap/engines/engine.py.215:       process: 0.83641 | load: 0.42279
+[I 2019-04-17 06:00:41] ...trap/engines/engine.py.216:       loss: 3.63673
+[I 2019-04-17 06:00:41] ...mizers/lr_scheduler.py.103:       norm: 1.16053
+[I 2019-04-17 06:00:50] ...trap/engines/engine.py.211: train: epoch 0 | batch 220/6453
+[I 2019-04-17 06:00:50] ...trap/engines/engine.py.214:       elapsed: 0:03:27 | left: 1:35:27
+[I 2019-04-17 06:00:50] ...trap/engines/engine.py.215:       process: 1.19497 | load: 0.78372
+[I 2019-04-17 06:00:50] ...trap/engines/engine.py.216:       loss: 4.31830
+[I 2019-04-17 06:00:50] ...mizers/lr_scheduler.py.103:       norm: 1.13658
+[I 2019-04-17 06:00:57] ...trap/engines/engine.py.211: train: epoch 0 | batch 230/6453
+[I 2019-04-17 06:00:57] ...trap/engines/engine.py.214:       elapsed: 0:03:34 | left: 1:18:54
+[I 2019-04-17 06:00:57] ...trap/engines/engine.py.215:       process: 0.83067 | load: 0.43029
+[I 2019-04-17 06:00:57] ...trap/engines/engine.py.216:       loss: 3.65614
+[I 2019-04-17 06:00:57] ...mizers/lr_scheduler.py.103:       norm: 1.11618
+[I 2019-04-17 06:01:05] ...trap/engines/engine.py.211: train: epoch 0 | batch 240/6453
+[I 2019-04-17 06:01:05] ...trap/engines/engine.py.214:       elapsed: 0:03:42 | left: 1:21:07
+[I 2019-04-17 06:01:05] ...trap/engines/engine.py.215:       process: 1.13865 | load: 0.75473
+[I 2019-04-17 06:01:05] ...trap/engines/engine.py.216:       loss: 3.74138
+[I 2019-04-17 06:01:05] ...mizers/lr_scheduler.py.103:       norm: 1.09514
+[I 2019-04-17 06:01:14] ...trap/engines/engine.py.211: train: epoch 0 | batch 250/6453
+[I 2019-04-17 06:01:14] ...trap/engines/engine.py.214:       elapsed: 0:03:51 | left: 1:35:00
+[I 2019-04-17 06:01:14] ...trap/engines/engine.py.215:       process: 1.49171 | load: 1.11287
+[I 2019-04-17 06:01:14] ...trap/engines/engine.py.216:       loss: 3.98327
+[I 2019-04-17 06:01:14] ...mizers/lr_scheduler.py.103:       norm: 1.07570
+[I 2019-04-17 06:01:21] ...trap/engines/engine.py.211: train: epoch 0 | batch 260/6453
+[I 2019-04-17 06:01:21] ...trap/engines/engine.py.214:       elapsed: 0:03:58 | left: 1:18:45
+[I 2019-04-17 06:01:21] ...trap/engines/engine.py.215:       process: 0.40682 | load: 0.00016
+[I 2019-04-17 06:01:21] ...trap/engines/engine.py.216:       loss: 3.48923
+[I 2019-04-17 06:01:21] ...mizers/lr_scheduler.py.103:       norm: 1.05784
+[I 2019-04-17 06:01:29] ...trap/engines/engine.py.211: train: epoch 0 | batch 270/6453
+[I 2019-04-17 06:01:29] ...trap/engines/engine.py.214:       elapsed: 0:04:06 | left: 1:32:05
+[I 2019-04-17 06:01:29] ...trap/engines/engine.py.215:       process: 1.77096 | load: 1.36953
+[I 2019-04-17 06:01:29] ...trap/engines/engine.py.216:       loss: 3.95541
+[I 2019-04-17 06:01:29] ...mizers/lr_scheduler.py.103:       norm: 1.04075
+[I 2019-04-17 06:01:36] ...trap/engines/engine.py.211: train: epoch 0 | batch 280/6453
+[I 2019-04-17 06:01:36] ...trap/engines/engine.py.214:       elapsed: 0:04:13 | left: 1:15:04
+[I 2019-04-17 06:01:36] ...trap/engines/engine.py.215:       process: 0.38250 | load: 0.00018
+[I 2019-04-17 06:01:36] ...trap/engines/engine.py.216:       loss: 3.04162
+[I 2019-04-17 06:01:36] ...mizers/lr_scheduler.py.103:       norm: 1.02282
+[I 2019-04-17 06:01:44] ...trap/engines/engine.py.211: train: epoch 0 | batch 290/6453
+[I 2019-04-17 06:01:44] ...trap/engines/engine.py.214:       elapsed: 0:04:21 | left: 1:23:37
+[I 2019-04-17 06:01:44] ...trap/engines/engine.py.215:       process: 1.37564 | load: 0.97989
+[I 2019-04-17 06:01:44] ...trap/engines/engine.py.216:       loss: 3.62996
+[I 2019-04-17 06:01:44] ...mizers/lr_scheduler.py.103:       norm: 1.00696
+[I 2019-04-17 06:01:51] ...trap/engines/engine.py.211: train: epoch 0 | batch 300/6453
+[I 2019-04-17 06:01:51] ...trap/engines/engine.py.214:       elapsed: 0:04:28 | left: 1:14:00
+[I 2019-04-17 06:01:51] ...trap/engines/engine.py.215:       process: 0.43356 | load: 0.00011
+[I 2019-04-17 06:01:51] ...trap/engines/engine.py.216:       loss: 3.26935
+[I 2019-04-17 06:01:51] ...mizers/lr_scheduler.py.103:       norm: 0.99259
+[I 2019-04-17 06:01:59] ...trap/engines/engine.py.211: train: epoch 0 | batch 310/6453
+[I 2019-04-17 06:01:59] ...trap/engines/engine.py.214:       elapsed: 0:04:36 | left: 1:21:45
+[I 2019-04-17 06:01:59] ...trap/engines/engine.py.215:       process: 1.48873 | load: 1.07948
+[I 2019-04-17 06:01:59] ...trap/engines/engine.py.216:       loss: 3.81309
+[I 2019-04-17 06:01:59] ...mizers/lr_scheduler.py.103:       norm: 0.97969
+[I 2019-04-17 06:02:05] ...trap/engines/engine.py.211: train: epoch 0 | batch 320/6453
+[I 2019-04-17 06:02:05] ...trap/engines/engine.py.214:       elapsed: 0:04:42 | left: 1:05:39
+[I 2019-04-17 06:02:05] ...trap/engines/engine.py.215:       process: 0.40256 | load: 0.00018
+[I 2019-04-17 06:02:05] ...trap/engines/engine.py.216:       loss: 4.04556
+[I 2019-04-17 06:02:05] ...mizers/lr_scheduler.py.103:       norm: 0.97071
+[I 2019-04-17 06:02:13] ...trap/engines/engine.py.211: train: epoch 0 | batch 330/6453
+[I 2019-04-17 06:02:13] ...trap/engines/engine.py.214:       elapsed: 0:04:50 | left: 1:20:02
+[I 2019-04-17 06:02:13] ...trap/engines/engine.py.215:       process: 1.36928 | load: 0.97818
+[I 2019-04-17 06:02:13] ...trap/engines/engine.py.216:       loss: 3.80998
+[I 2019-04-17 06:02:13] ...mizers/lr_scheduler.py.103:       norm: 0.95943
+[I 2019-04-17 06:02:20] ...trap/engines/engine.py.211: train: epoch 0 | batch 340/6453
+[I 2019-04-17 06:02:20] ...trap/engines/engine.py.214:       elapsed: 0:04:56 | left: 1:10:37
+[I 2019-04-17 06:02:20] ...trap/engines/engine.py.215:       process: 0.40059 | load: 0.00013
+[I 2019-04-17 06:02:20] ...trap/engines/engine.py.216:       loss: 3.09672
+[I 2019-04-17 06:02:20] ...mizers/lr_scheduler.py.103:       norm: 0.94870
+[I 2019-04-17 06:02:27] ...trap/engines/engine.py.211: train: epoch 0 | batch 350/6453
+[I 2019-04-17 06:02:27] ...trap/engines/engine.py.214:       elapsed: 0:05:04 | left: 1:23:12
+[I 2019-04-17 06:02:27] ...trap/engines/engine.py.215:       process: 1.73720 | load: 1.35709
+[I 2019-04-17 06:02:27] ...trap/engines/engine.py.216:       loss: 4.04299
+[I 2019-04-17 06:02:27] ...mizers/lr_scheduler.py.103:       norm: 0.93842
+[I 2019-04-17 06:02:33] ...trap/engines/engine.py.211: train: epoch 0 | batch 360/6453
+[I 2019-04-17 06:02:33] ...trap/engines/engine.py.214:       elapsed: 0:05:10 | left: 1:05:28
+[I 2019-04-17 06:02:33] ...trap/engines/engine.py.215:       process: 0.39727 | load: 0.00009
+[I 2019-04-17 06:02:33] ...trap/engines/engine.py.216:       loss: 3.03920
+[I 2019-04-17 06:02:33] ...mizers/lr_scheduler.py.103:       norm: 0.92941
+[I 2019-04-17 06:02:41] ...trap/engines/engine.py.211: train: epoch 0 | batch 370/6453
+[I 2019-04-17 06:02:41] ...trap/engines/engine.py.214:       elapsed: 0:05:18 | left: 1:22:01
+[I 2019-04-17 06:02:41] ...trap/engines/engine.py.215:       process: 1.53513 | load: 1.14586
+[I 2019-04-17 06:02:41] ...trap/engines/engine.py.216:       loss: 3.18452
+[I 2019-04-17 06:02:41] ...mizers/lr_scheduler.py.103:       norm: 0.92116
+[I 2019-04-17 06:02:47] ...trap/engines/engine.py.211: train: epoch 0 | batch 380/6453
+[I 2019-04-17 06:02:47] ...trap/engines/engine.py.214:       elapsed: 0:05:24 | left: 1:10:02
+[I 2019-04-17 06:02:47] ...trap/engines/engine.py.215:       process: 0.40851 | load: 0.00017
+[I 2019-04-17 06:02:47] ...trap/engines/engine.py.216:       loss: 4.29698
+[I 2019-04-17 06:02:47] ...mizers/lr_scheduler.py.103:       norm: 0.91219
+[I 2019-04-17 06:02:55] ...trap/engines/engine.py.211: train: epoch 0 | batch 390/6453
+[I 2019-04-17 06:02:55] ...trap/engines/engine.py.214:       elapsed: 0:05:32 | left: 1:21:24
+[I 2019-04-17 06:02:55] ...trap/engines/engine.py.215:       process: 1.38648 | load: 0.99316
+[I 2019-04-17 06:02:55] ...trap/engines/engine.py.216:       loss: 4.14153
+[I 2019-04-17 06:02:55] ...mizers/lr_scheduler.py.103:       norm: 0.90547
+[I 2019-04-17 06:03:02] ...trap/engines/engine.py.211: train: epoch 0 | batch 400/6453
+[I 2019-04-17 06:03:02] ...trap/engines/engine.py.214:       elapsed: 0:05:39 | left: 1:07:28
+[I 2019-04-17 06:03:02] ...trap/engines/engine.py.215:       process: 0.38617 | load: 0.00021
+[I 2019-04-17 06:03:02] ...trap/engines/engine.py.216:       loss: 3.70023
+[I 2019-04-17 06:03:02] ...mizers/lr_scheduler.py.103:       norm: 0.89767
+[I 2019-04-17 06:03:10] ...trap/engines/engine.py.211: train: epoch 0 | batch 410/6453
+[I 2019-04-17 06:03:10] ...trap/engines/engine.py.214:       elapsed: 0:05:47 | left: 1:19:57
+[I 2019-04-17 06:03:10] ...trap/engines/engine.py.215:       process: 1.56322 | load: 1.17992
+[I 2019-04-17 06:03:10] ...trap/engines/engine.py.216:       loss: 3.15845
+[I 2019-04-17 06:03:10] ...mizers/lr_scheduler.py.103:       norm: 0.89178
+[I 2019-04-17 06:03:16] ...trap/engines/engine.py.211: train: epoch 0 | batch 420/6453
+[I 2019-04-17 06:03:16] ...trap/engines/engine.py.214:       elapsed: 0:05:53 | left: 1:05:58
+[I 2019-04-17 06:03:16] ...trap/engines/engine.py.215:       process: 0.39730 | load: 0.00014
+[I 2019-04-17 06:03:16] ...trap/engines/engine.py.216:       loss: 3.52419
+[I 2019-04-17 06:03:16] ...mizers/lr_scheduler.py.103:       norm: 0.88432
+[I 2019-04-17 06:03:24] ...trap/engines/engine.py.211: train: epoch 0 | batch 430/6453
+[I 2019-04-17 06:03:24] ...trap/engines/engine.py.214:       elapsed: 0:06:01 | left: 1:24:39
+[I 2019-04-17 06:03:24] ...trap/engines/engine.py.215:       process: 1.79021 | load: 1.40336
+[I 2019-04-17 06:03:24] ...trap/engines/engine.py.216:       loss: 3.14854
+[I 2019-04-17 06:03:24] ...mizers/lr_scheduler.py.103:       norm: 0.87637
+[I 2019-04-17 06:03:31] ...trap/engines/engine.py.211: train: epoch 0 | batch 440/6453
+[I 2019-04-17 06:03:31] ...trap/engines/engine.py.214:       elapsed: 0:06:08 | left: 1:11:29
+[I 2019-04-17 06:03:31] ...trap/engines/engine.py.215:       process: 0.39701 | load: 0.00020
+[I 2019-04-17 06:03:31] ...trap/engines/engine.py.216:       loss: 3.77570
+[I 2019-04-17 06:03:31] ...mizers/lr_scheduler.py.103:       norm: 0.86921
+[I 2019-04-17 06:03:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 450/6453
+[I 2019-04-17 06:03:39] ...trap/engines/engine.py.214:       elapsed: 0:06:16 | left: 1:22:47
+[I 2019-04-17 06:03:39] ...trap/engines/engine.py.215:       process: 1.45585 | load: 1.04520
+[I 2019-04-17 06:03:39] ...trap/engines/engine.py.216:       loss: 3.45603
+[I 2019-04-17 06:03:39] ...mizers/lr_scheduler.py.103:       norm: 0.86366
+[I 2019-04-17 06:03:45] ...trap/engines/engine.py.211: train: epoch 0 | batch 460/6453
+[I 2019-04-17 06:03:45] ...trap/engines/engine.py.214:       elapsed: 0:06:22 | left: 1:06:34
+[I 2019-04-17 06:03:45] ...trap/engines/engine.py.215:       process: 0.40387 | load: 0.00015
+[I 2019-04-17 06:03:45] ...trap/engines/engine.py.216:       loss: 4.28934
+[I 2019-04-17 06:03:45] ...mizers/lr_scheduler.py.103:       norm: 0.85900
+[I 2019-04-17 06:03:53] ...trap/engines/engine.py.211: train: epoch 0 | batch 470/6453
+[I 2019-04-17 06:03:53] ...trap/engines/engine.py.214:       elapsed: 0:06:30 | left: 1:22:35
+[I 2019-04-17 06:03:53] ...trap/engines/engine.py.215:       process: 1.77678 | load: 1.38223
+[I 2019-04-17 06:03:53] ...trap/engines/engine.py.216:       loss: 3.27434
+[I 2019-04-17 06:03:53] ...mizers/lr_scheduler.py.103:       norm: 0.85365
+[I 2019-04-17 06:03:59] ...trap/engines/engine.py.211: train: epoch 0 | batch 480/6453
+[I 2019-04-17 06:03:59] ...trap/engines/engine.py.214:       elapsed: 0:06:36 | left: 1:00:20
+[I 2019-04-17 06:03:59] ...trap/engines/engine.py.215:       process: 0.39595 | load: 0.00023
+[I 2019-04-17 06:03:59] ...trap/engines/engine.py.216:       loss: 3.94622
+[I 2019-04-17 06:03:59] ...mizers/lr_scheduler.py.103:       norm: 0.84842
+[I 2019-04-17 06:04:06] ...trap/engines/engine.py.211: train: epoch 0 | batch 490/6453
+[I 2019-04-17 06:04:06] ...trap/engines/engine.py.214:       elapsed: 0:06:43 | left: 1:10:52
+[I 2019-04-17 06:04:06] ...trap/engines/engine.py.215:       process: 1.05851 | load: 0.65949
+[I 2019-04-17 06:04:06] ...trap/engines/engine.py.216:       loss: 3.54064
+[I 2019-04-17 06:04:06] ...mizers/lr_scheduler.py.103:       norm: 0.84420
+[I 2019-04-17 06:04:12] ...trap/engines/engine.py.211: train: epoch 0 | batch 500/6453
+[I 2019-04-17 06:04:12] ...trap/engines/engine.py.214:       elapsed: 0:06:49 | left: 1:04:11
+[I 2019-04-17 06:04:12] ...trap/engines/engine.py.215:       process: 0.38938 | load: 0.00023
+[I 2019-04-17 06:04:12] ...trap/engines/engine.py.216:       loss: 2.78637
+[I 2019-04-17 06:04:12] ...mizers/lr_scheduler.py.103:       norm: 0.83871
+[I 2019-04-17 06:04:19] ...trap/engines/engine.py.211: train: epoch 0 | batch 510/6453
+[I 2019-04-17 06:04:19] ...trap/engines/engine.py.214:       elapsed: 0:06:56 | left: 1:20:25
+[I 2019-04-17 06:04:19] ...trap/engines/engine.py.215:       process: 1.85090 | load: 1.45972
+[I 2019-04-17 06:04:19] ...trap/engines/engine.py.216:       loss: 3.10198
+[I 2019-04-17 06:04:19] ...mizers/lr_scheduler.py.103:       norm: 0.83499
+[I 2019-04-17 06:04:25] ...trap/engines/engine.py.211: train: epoch 0 | batch 520/6453
+[I 2019-04-17 06:04:25] ...trap/engines/engine.py.214:       elapsed: 0:07:02 | left: 0:57:47
+[I 2019-04-17 06:04:25] ...trap/engines/engine.py.215:       process: 0.39662 | load: 0.00011
+[I 2019-04-17 06:04:25] ...trap/engines/engine.py.216:       loss: 4.05161
+[I 2019-04-17 06:04:25] ...mizers/lr_scheduler.py.103:       norm: 0.83038
+[I 2019-04-17 06:04:32] ...trap/engines/engine.py.211: train: epoch 0 | batch 530/6453
+[I 2019-04-17 06:04:32] ...trap/engines/engine.py.214:       elapsed: 0:07:09 | left: 1:14:00
+[I 2019-04-17 06:04:32] ...trap/engines/engine.py.215:       process: 1.49658 | load: 1.10090
+[I 2019-04-17 06:04:32] ...trap/engines/engine.py.216:       loss: 3.15929
+[I 2019-04-17 06:04:32] ...mizers/lr_scheduler.py.103:       norm: 0.82580
+[I 2019-04-17 06:04:38] ...trap/engines/engine.py.211: train: epoch 0 | batch 540/6453
+[I 2019-04-17 06:04:38] ...trap/engines/engine.py.214:       elapsed: 0:07:15 | left: 1:04:10
+[I 2019-04-17 06:04:38] ...trap/engines/engine.py.215:       process: 0.52790 | load: 0.11099
+[I 2019-04-17 06:04:38] ...trap/engines/engine.py.216:       loss: 3.00703
+[I 2019-04-17 06:04:38] ...mizers/lr_scheduler.py.103:       norm: 0.82365
+[I 2019-04-17 06:04:45] ...trap/engines/engine.py.211: train: epoch 0 | batch 550/6453
+[I 2019-04-17 06:04:45] ...trap/engines/engine.py.214:       elapsed: 0:07:22 | left: 1:07:35
+[I 2019-04-17 06:04:45] ...trap/engines/engine.py.215:       process: 0.91561 | load: 0.52563
+[I 2019-04-17 06:04:45] ...trap/engines/engine.py.216:       loss: 3.82991
+[I 2019-04-17 06:04:45] ...mizers/lr_scheduler.py.103:       norm: 0.81995
+[I 2019-04-17 06:04:52] ...trap/engines/engine.py.211: train: epoch 0 | batch 560/6453
+[I 2019-04-17 06:04:52] ...trap/engines/engine.py.214:       elapsed: 0:07:29 | left: 1:09:53
+[I 2019-04-17 06:04:52] ...trap/engines/engine.py.215:       process: 0.92924 | load: 0.51179
+[I 2019-04-17 06:04:52] ...trap/engines/engine.py.216:       loss: 3.75899
+[I 2019-04-17 06:04:52] ...mizers/lr_scheduler.py.103:       norm: 0.81592
+[I 2019-04-17 06:04:58] ...trap/engines/engine.py.211: train: epoch 0 | batch 570/6453
+[I 2019-04-17 06:04:58] ...trap/engines/engine.py.214:       elapsed: 0:07:35 | left: 1:03:54
+[I 2019-04-17 06:04:58] ...trap/engines/engine.py.215:       process: 0.60677 | load: 0.21891
+[I 2019-04-17 06:04:58] ...trap/engines/engine.py.216:       loss: 4.08774
+[I 2019-04-17 06:04:58] ...mizers/lr_scheduler.py.103:       norm: 0.81229
+[I 2019-04-17 06:05:05] ...trap/engines/engine.py.211: train: epoch 0 | batch 580/6453
+[I 2019-04-17 06:05:05] ...trap/engines/engine.py.214:       elapsed: 0:07:42 | left: 0:58:49
+[I 2019-04-17 06:05:05] ...trap/engines/engine.py.215:       process: 0.40113 | load: 0.00019
+[I 2019-04-17 06:05:05] ...trap/engines/engine.py.216:       loss: 3.92265
+[I 2019-04-17 06:05:05] ...mizers/lr_scheduler.py.103:       norm: 0.81116
+[I 2019-04-17 06:05:13] ...trap/engines/engine.py.211: train: epoch 0 | batch 590/6453
+[I 2019-04-17 06:05:13] ...trap/engines/engine.py.214:       elapsed: 0:07:50 | left: 1:19:46
+[I 2019-04-17 06:05:13] ...trap/engines/engine.py.215:       process: 1.58108 | load: 1.17380
+[I 2019-04-17 06:05:13] ...trap/engines/engine.py.216:       loss: 3.15452
+[I 2019-04-17 06:05:13] ...mizers/lr_scheduler.py.103:       norm: 0.80813
+[I 2019-04-17 06:05:19] ...trap/engines/engine.py.211: train: epoch 0 | batch 600/6453
+[I 2019-04-17 06:05:19] ...trap/engines/engine.py.214:       elapsed: 0:07:56 | left: 1:02:57
+[I 2019-04-17 06:05:19] ...trap/engines/engine.py.215:       process: 0.41493 | load: 0.00016
+[I 2019-04-17 06:05:19] ...trap/engines/engine.py.216:       loss: 3.54322
+[I 2019-04-17 06:05:19] ...mizers/lr_scheduler.py.103:       norm: 0.80491
+[I 2019-04-17 06:05:26] ...trap/engines/engine.py.211: train: epoch 0 | batch 610/6453
+[I 2019-04-17 06:05:26] ...trap/engines/engine.py.214:       elapsed: 0:08:03 | left: 1:09:09
+[I 2019-04-17 06:05:26] ...trap/engines/engine.py.215:       process: 1.07003 | load: 0.66344
+[I 2019-04-17 06:05:26] ...trap/engines/engine.py.216:       loss: 2.57695
+[I 2019-04-17 06:05:26] ...mizers/lr_scheduler.py.103:       norm: 0.80139
+[I 2019-04-17 06:05:33] ...trap/engines/engine.py.211: train: epoch 0 | batch 620/6453
+[I 2019-04-17 06:05:33] ...trap/engines/engine.py.214:       elapsed: 0:08:09 | left: 0:56:16
+[I 2019-04-17 06:05:33] ...trap/engines/engine.py.215:       process: 0.38869 | load: 0.00025
+[I 2019-04-17 06:05:33] ...trap/engines/engine.py.216:       loss: 3.56036
+[I 2019-04-17 06:05:33] ...mizers/lr_scheduler.py.103:       norm: 0.79908
+[I 2019-04-17 06:05:40] ...trap/engines/engine.py.211: train: epoch 0 | batch 630/6453
+[I 2019-04-17 06:05:40] ...trap/engines/engine.py.214:       elapsed: 0:08:17 | left: 1:11:35
+[I 2019-04-17 06:05:40] ...trap/engines/engine.py.215:       process: 0.38904 | load: 0.00029
+[I 2019-04-17 06:05:40] ...trap/engines/engine.py.216:       loss: 2.73055
+[I 2019-04-17 06:05:40] ...mizers/lr_scheduler.py.103:       norm: 0.79562
+[I 2019-04-17 06:05:46] ...trap/engines/engine.py.211: train: epoch 0 | batch 640/6453
+[I 2019-04-17 06:05:46] ...trap/engines/engine.py.214:       elapsed: 0:08:23 | left: 0:56:11
+[I 2019-04-17 06:05:46] ...trap/engines/engine.py.215:       process: 0.39208 | load: 0.00014
+[I 2019-04-17 06:05:46] ...trap/engines/engine.py.216:       loss: 4.02826
+[I 2019-04-17 06:05:46] ...mizers/lr_scheduler.py.103:       norm: 0.79279
+[I 2019-04-17 06:05:54] ...trap/engines/engine.py.211: train: epoch 0 | batch 650/6453
+[I 2019-04-17 06:05:54] ...trap/engines/engine.py.214:       elapsed: 0:08:31 | left: 1:13:52
+[I 2019-04-17 06:05:54] ...trap/engines/engine.py.215:       process: 0.39258 | load: 0.00022
+[I 2019-04-17 06:05:54] ...trap/engines/engine.py.216:       loss: 3.08398
+[I 2019-04-17 06:05:54] ...mizers/lr_scheduler.py.103:       norm: 0.78971
+[I 2019-04-17 06:06:01] ...trap/engines/engine.py.211: train: epoch 0 | batch 660/6453
+[I 2019-04-17 06:06:01] ...trap/engines/engine.py.214:       elapsed: 0:08:38 | left: 1:00:59
+[I 2019-04-17 06:06:01] ...trap/engines/engine.py.215:       process: 0.39807 | load: 0.00017
+[I 2019-04-17 06:06:01] ...trap/engines/engine.py.216:       loss: 2.92095
+[I 2019-04-17 06:06:01] ...mizers/lr_scheduler.py.103:       norm: 0.78785
+[I 2019-04-17 06:06:08] ...trap/engines/engine.py.211: train: epoch 0 | batch 670/6453
+[I 2019-04-17 06:06:08] ...trap/engines/engine.py.214:       elapsed: 0:08:45 | left: 1:07:53
+[I 2019-04-17 06:06:08] ...trap/engines/engine.py.215:       process: 0.39678 | load: 0.00022
+[I 2019-04-17 06:06:08] ...trap/engines/engine.py.216:       loss: 3.43338
+[I 2019-04-17 06:06:08] ...mizers/lr_scheduler.py.103:       norm: 0.78634
+[I 2019-04-17 06:06:15] ...trap/engines/engine.py.211: train: epoch 0 | batch 680/6453
+[I 2019-04-17 06:06:15] ...trap/engines/engine.py.214:       elapsed: 0:08:52 | left: 1:00:08
+[I 2019-04-17 06:06:15] ...trap/engines/engine.py.215:       process: 0.40736 | load: 0.00025
+[I 2019-04-17 06:06:15] ...trap/engines/engine.py.216:       loss: 2.75019
+[I 2019-04-17 06:06:15] ...mizers/lr_scheduler.py.103:       norm: 0.78390
+[I 2019-04-17 06:06:24] ...trap/engines/engine.py.211: train: epoch 0 | batch 690/6453
+[I 2019-04-17 06:06:24] ...trap/engines/engine.py.214:       elapsed: 0:09:01 | left: 1:14:11
+[I 2019-04-17 06:06:24] ...trap/engines/engine.py.215:       process: 0.40042 | load: 0.00011
+[I 2019-04-17 06:06:24] ...trap/engines/engine.py.216:       loss: 3.32376
+[I 2019-04-17 06:06:24] ...mizers/lr_scheduler.py.103:       norm: 0.78162
+[I 2019-04-17 06:06:30] ...trap/engines/engine.py.211: train: epoch 0 | batch 700/6453
+[I 2019-04-17 06:06:30] ...trap/engines/engine.py.214:       elapsed: 0:09:07 | left: 1:02:19
+[I 2019-04-17 06:06:30] ...trap/engines/engine.py.215:       process: 0.39040 | load: 0.00022
+[I 2019-04-17 06:06:30] ...trap/engines/engine.py.216:       loss: 2.95444
+[I 2019-04-17 06:06:30] ...mizers/lr_scheduler.py.103:       norm: 0.77914
+[I 2019-04-17 06:06:38] ...trap/engines/engine.py.211: train: epoch 0 | batch 710/6453
+[I 2019-04-17 06:06:38] ...trap/engines/engine.py.214:       elapsed: 0:09:15 | left: 1:07:39
+[I 2019-04-17 06:06:38] ...trap/engines/engine.py.215:       process: 0.40651 | load: 0.00021
+[I 2019-04-17 06:06:38] ...trap/engines/engine.py.216:       loss: 3.01763
+[I 2019-04-17 06:06:38] ...mizers/lr_scheduler.py.103:       norm: 0.77759
+[I 2019-04-17 06:06:45] ...trap/engines/engine.py.211: train: epoch 0 | batch 720/6453
+[I 2019-04-17 06:06:45] ...trap/engines/engine.py.214:       elapsed: 0:09:22 | left: 1:02:53
+[I 2019-04-17 06:06:45] ...trap/engines/engine.py.215:       process: 0.39632 | load: 0.00029
+[I 2019-04-17 06:06:45] ...trap/engines/engine.py.216:       loss: 3.20362
+[I 2019-04-17 06:06:45] ...mizers/lr_scheduler.py.103:       norm: 0.77489
+[I 2019-04-17 06:06:53] ...trap/engines/engine.py.211: train: epoch 0 | batch 730/6453
+[I 2019-04-17 06:06:53] ...trap/engines/engine.py.214:       elapsed: 0:09:30 | left: 1:16:42
+[I 2019-04-17 06:06:53] ...trap/engines/engine.py.215:       process: 0.40029 | load: 0.00021
+[I 2019-04-17 06:06:53] ...trap/engines/engine.py.216:       loss: 3.64625
+[I 2019-04-17 06:06:53] ...mizers/lr_scheduler.py.103:       norm: 0.77462
+[I 2019-04-17 06:07:00] ...trap/engines/engine.py.211: train: epoch 0 | batch 740/6453
+[I 2019-04-17 06:07:00] ...trap/engines/engine.py.214:       elapsed: 0:09:37 | left: 1:03:26
+[I 2019-04-17 06:07:00] ...trap/engines/engine.py.215:       process: 0.39409 | load: 0.00023
+[I 2019-04-17 06:07:00] ...trap/engines/engine.py.216:       loss: 3.28368
+[I 2019-04-17 06:07:00] ...mizers/lr_scheduler.py.103:       norm: 0.77168
+[I 2019-04-17 06:07:09] ...trap/engines/engine.py.211: train: epoch 0 | batch 750/6453
+[I 2019-04-17 06:07:09] ...trap/engines/engine.py.214:       elapsed: 0:09:46 | left: 1:12:19
+[I 2019-04-17 06:07:09] ...trap/engines/engine.py.215:       process: 0.39498 | load: 0.00009
+[I 2019-04-17 06:07:09] ...trap/engines/engine.py.216:       loss: 3.12771
+[I 2019-04-17 06:07:09] ...mizers/lr_scheduler.py.103:       norm: 0.76940
+[I 2019-04-17 06:07:15] ...trap/engines/engine.py.211: train: epoch 0 | batch 760/6453
+[I 2019-04-17 06:07:15] ...trap/engines/engine.py.214:       elapsed: 0:09:52 | left: 0:58:36
+[I 2019-04-17 06:07:15] ...trap/engines/engine.py.215:       process: 0.40099 | load: 0.00016
+[I 2019-04-17 06:07:15] ...trap/engines/engine.py.216:       loss: 3.72212
+[I 2019-04-17 06:07:15] ...mizers/lr_scheduler.py.103:       norm: 0.76796
+[I 2019-04-17 06:07:24] ...trap/engines/engine.py.211: train: epoch 0 | batch 770/6453
+[I 2019-04-17 06:07:24] ...trap/engines/engine.py.214:       elapsed: 0:10:01 | left: 1:23:13
+[I 2019-04-17 06:07:24] ...trap/engines/engine.py.215:       process: 0.39362 | load: 0.00014
+[I 2019-04-17 06:07:24] ...trap/engines/engine.py.216:       loss: 3.90146
+[I 2019-04-17 06:07:24] ...mizers/lr_scheduler.py.103:       norm: 0.76777
+[I 2019-04-17 06:07:31] ...trap/engines/engine.py.211: train: epoch 0 | batch 780/6453
+[I 2019-04-17 06:07:31] ...trap/engines/engine.py.214:       elapsed: 0:10:08 | left: 1:05:06
+[I 2019-04-17 06:07:31] ...trap/engines/engine.py.215:       process: 0.40850 | load: 0.00019
+[I 2019-04-17 06:07:31] ...trap/engines/engine.py.216:       loss: 3.36213
+[I 2019-04-17 06:07:31] ...mizers/lr_scheduler.py.103:       norm: 0.76574
+[I 2019-04-17 06:07:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 790/6453
+[I 2019-04-17 06:07:39] ...trap/engines/engine.py.214:       elapsed: 0:10:16 | left: 1:08:36
+[I 2019-04-17 06:07:39] ...trap/engines/engine.py.215:       process: 0.38652 | load: 0.00009
+[I 2019-04-17 06:07:39] ...trap/engines/engine.py.216:       loss: 2.95401
+[I 2019-04-17 06:07:39] ...mizers/lr_scheduler.py.103:       norm: 0.76393
+[I 2019-04-17 06:07:45] ...trap/engines/engine.py.211: train: epoch 0 | batch 800/6453
+[I 2019-04-17 06:07:45] ...trap/engines/engine.py.214:       elapsed: 0:10:22 | left: 0:56:58
+[I 2019-04-17 06:07:45] ...trap/engines/engine.py.215:       process: 0.40039 | load: 0.00019
+[I 2019-04-17 06:07:45] ...trap/engines/engine.py.216:       loss: 2.96541
+[I 2019-04-17 06:07:45] ...mizers/lr_scheduler.py.103:       norm: 0.76132
+[I 2019-04-17 06:07:53] ...trap/engines/engine.py.211: train: epoch 0 | batch 810/6453
+[I 2019-04-17 06:07:53] ...trap/engines/engine.py.214:       elapsed: 0:10:30 | left: 1:11:16
+[I 2019-04-17 06:07:53] ...trap/engines/engine.py.215:       process: 0.39562 | load: 0.00011
+[I 2019-04-17 06:07:53] ...trap/engines/engine.py.216:       loss: 2.73915
+[I 2019-04-17 06:07:53] ...mizers/lr_scheduler.py.103:       norm: 0.75908
+[I 2019-04-17 06:08:00] ...trap/engines/engine.py.211: train: epoch 0 | batch 820/6453
+[I 2019-04-17 06:08:00] ...trap/engines/engine.py.214:       elapsed: 0:10:37 | left: 1:02:53
+[I 2019-04-17 06:08:00] ...trap/engines/engine.py.215:       process: 0.40369 | load: 0.00027
+[I 2019-04-17 06:08:00] ...trap/engines/engine.py.216:       loss: 3.62410
+[I 2019-04-17 06:08:00] ...mizers/lr_scheduler.py.103:       norm: 0.75834
+[I 2019-04-17 06:08:08] ...trap/engines/engine.py.211: train: epoch 0 | batch 830/6453
+[I 2019-04-17 06:08:08] ...trap/engines/engine.py.214:       elapsed: 0:10:45 | left: 1:06:12
+[I 2019-04-17 06:08:08] ...trap/engines/engine.py.215:       process: 0.39849 | load: 0.00008
+[I 2019-04-17 06:08:08] ...trap/engines/engine.py.216:       loss: 3.55432
+[I 2019-04-17 06:08:08] ...mizers/lr_scheduler.py.103:       norm: 0.75703
+[I 2019-04-17 06:08:14] ...trap/engines/engine.py.211: train: epoch 0 | batch 840/6453
+[I 2019-04-17 06:08:14] ...trap/engines/engine.py.214:       elapsed: 0:10:51 | left: 1:00:00
+[I 2019-04-17 06:08:14] ...trap/engines/engine.py.215:       process: 0.41432 | load: 0.00022
+[I 2019-04-17 06:08:14] ...trap/engines/engine.py.216:       loss: 2.95701
+[I 2019-04-17 06:08:14] ...mizers/lr_scheduler.py.103:       norm: 0.75632
+[I 2019-04-17 06:08:23] ...trap/engines/engine.py.211: train: epoch 0 | batch 850/6453
+[I 2019-04-17 06:08:23] ...trap/engines/engine.py.214:       elapsed: 0:11:00 | left: 1:25:13
+[I 2019-04-17 06:08:23] ...trap/engines/engine.py.215:       process: 2.08463 | load: 1.69457
+[I 2019-04-17 06:08:23] ...trap/engines/engine.py.216:       loss: 3.26779
+[I 2019-04-17 06:08:23] ...mizers/lr_scheduler.py.103:       norm: 0.75546
+[I 2019-04-17 06:08:29] ...trap/engines/engine.py.211: train: epoch 0 | batch 860/6453
+[I 2019-04-17 06:08:29] ...trap/engines/engine.py.214:       elapsed: 0:11:06 | left: 1:03:38
+[I 2019-04-17 06:08:29] ...trap/engines/engine.py.215:       process: 0.38298 | load: 0.00020
+[I 2019-04-17 06:08:29] ...trap/engines/engine.py.216:       loss: 3.12668
+[I 2019-04-17 06:08:29] ...mizers/lr_scheduler.py.103:       norm: 0.75427
+[I 2019-04-17 06:08:37] ...trap/engines/engine.py.211: train: epoch 0 | batch 870/6453
+[I 2019-04-17 06:08:37] ...trap/engines/engine.py.214:       elapsed: 0:11:14 | left: 1:18:14
+[I 2019-04-17 06:08:37] ...trap/engines/engine.py.215:       process: 1.80932 | load: 1.41461
+[I 2019-04-17 06:08:37] ...trap/engines/engine.py.216:       loss: 3.68420
+[I 2019-04-17 06:08:37] ...mizers/lr_scheduler.py.103:       norm: 0.75261
+[I 2019-04-17 06:08:43] ...trap/engines/engine.py.211: train: epoch 0 | batch 880/6453
+[I 2019-04-17 06:08:43] ...trap/engines/engine.py.214:       elapsed: 0:11:20 | left: 0:56:24
+[I 2019-04-17 06:08:43] ...trap/engines/engine.py.215:       process: 0.38853 | load: 0.00021
+[I 2019-04-17 06:08:43] ...trap/engines/engine.py.216:       loss: 2.68457
+[I 2019-04-17 06:08:43] ...mizers/lr_scheduler.py.103:       norm: 0.75102
+[I 2019-04-17 06:08:51] ...trap/engines/engine.py.211: train: epoch 0 | batch 890/6453
+[I 2019-04-17 06:08:51] ...trap/engines/engine.py.214:       elapsed: 0:11:28 | left: 1:22:58
+[I 2019-04-17 06:08:51] ...trap/engines/engine.py.215:       process: 2.04940 | load: 1.64952
+[I 2019-04-17 06:08:51] ...trap/engines/engine.py.216:       loss: 3.04461
+[I 2019-04-17 06:08:51] ...mizers/lr_scheduler.py.103:       norm: 0.74916
+[I 2019-04-17 06:08:57] ...trap/engines/engine.py.211: train: epoch 0 | batch 900/6453
+[I 2019-04-17 06:08:57] ...trap/engines/engine.py.214:       elapsed: 0:11:34 | left: 1:05:36
+[I 2019-04-17 06:08:57] ...trap/engines/engine.py.215:       process: 0.40313 | load: 0.00019
+[I 2019-04-17 06:08:57] ...trap/engines/engine.py.216:       loss: 3.15720
+[I 2019-04-17 06:08:57] ...mizers/lr_scheduler.py.103:       norm: 0.74803
+[I 2019-04-17 06:09:04] ...trap/engines/engine.py.211: train: epoch 0 | batch 910/6453
+[I 2019-04-17 06:09:04] ...trap/engines/engine.py.214:       elapsed: 0:11:41 | left: 1:06:56
+[I 2019-04-17 06:09:04] ...trap/engines/engine.py.215:       process: 1.24077 | load: 0.83597
+[I 2019-04-17 06:09:04] ...trap/engines/engine.py.216:       loss: 2.99575
+[I 2019-04-17 06:09:04] ...mizers/lr_scheduler.py.103:       norm: 0.74629
+[I 2019-04-17 06:09:11] ...trap/engines/engine.py.211: train: epoch 0 | batch 920/6453
+[I 2019-04-17 06:09:11] ...trap/engines/engine.py.214:       elapsed: 0:11:48 | left: 0:58:28
+[I 2019-04-17 06:09:11] ...trap/engines/engine.py.215:       process: 0.38291 | load: 0.00019
+[I 2019-04-17 06:09:11] ...trap/engines/engine.py.216:       loss: 3.03555
+[I 2019-04-17 06:09:11] ...mizers/lr_scheduler.py.103:       norm: 0.74490
+[I 2019-04-17 06:09:18] ...trap/engines/engine.py.211: train: epoch 0 | batch 930/6453
+[I 2019-04-17 06:09:18] ...trap/engines/engine.py.214:       elapsed: 0:11:55 | left: 1:11:51
+[I 2019-04-17 06:09:18] ...trap/engines/engine.py.215:       process: 1.49619 | load: 1.09055
+[I 2019-04-17 06:09:18] ...trap/engines/engine.py.216:       loss: 3.05868
+[I 2019-04-17 06:09:18] ...mizers/lr_scheduler.py.103:       norm: 0.74366
+[I 2019-04-17 06:09:25] ...trap/engines/engine.py.211: train: epoch 0 | batch 940/6453
+[I 2019-04-17 06:09:25] ...trap/engines/engine.py.214:       elapsed: 0:12:02 | left: 1:04:04
+[I 2019-04-17 06:09:25] ...trap/engines/engine.py.215:       process: 0.40958 | load: 0.00024
+[I 2019-04-17 06:09:25] ...trap/engines/engine.py.216:       loss: 3.12994
+[I 2019-04-17 06:09:25] ...mizers/lr_scheduler.py.103:       norm: 0.74210
+[I 2019-04-17 06:09:33] ...trap/engines/engine.py.211: train: epoch 0 | batch 950/6453
+[I 2019-04-17 06:09:33] ...trap/engines/engine.py.214:       elapsed: 0:12:10 | left: 1:17:30
+[I 2019-04-17 06:09:33] ...trap/engines/engine.py.215:       process: 1.68840 | load: 1.30224
+[I 2019-04-17 06:09:33] ...trap/engines/engine.py.216:       loss: 2.67179
+[I 2019-04-17 06:09:33] ...mizers/lr_scheduler.py.103:       norm: 0.74061
+[I 2019-04-17 06:09:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 960/6453
+[I 2019-04-17 06:09:39] ...trap/engines/engine.py.214:       elapsed: 0:12:16 | left: 0:56:47
+[I 2019-04-17 06:09:39] ...trap/engines/engine.py.215:       process: 0.40303 | load: 0.00020
+[I 2019-04-17 06:09:39] ...trap/engines/engine.py.216:       loss: 2.88085
+[I 2019-04-17 06:09:39] ...mizers/lr_scheduler.py.103:       norm: 0.73965
+[I 2019-04-17 06:09:46] ...trap/engines/engine.py.211: train: epoch 0 | batch 970/6453
+[I 2019-04-17 06:09:46] ...trap/engines/engine.py.214:       elapsed: 0:12:23 | left: 1:04:50
+[I 2019-04-17 06:09:46] ...trap/engines/engine.py.215:       process: 1.00867 | load: 0.59507
+[I 2019-04-17 06:09:46] ...trap/engines/engine.py.216:       loss: 3.32625
+[I 2019-04-17 06:09:46] ...mizers/lr_scheduler.py.103:       norm: 0.73828
+[I 2019-04-17 06:09:53] ...trap/engines/engine.py.211: train: epoch 0 | batch 980/6453
+[I 2019-04-17 06:09:53] ...trap/engines/engine.py.214:       elapsed: 0:12:30 | left: 1:03:01
+[I 2019-04-17 06:09:53] ...trap/engines/engine.py.215:       process: 0.43269 | load: 0.04757
+[I 2019-04-17 06:09:53] ...trap/engines/engine.py.216:       loss: 2.67963
+[I 2019-04-17 06:09:53] ...mizers/lr_scheduler.py.103:       norm: 0.73820
+[I 2019-04-17 06:10:00] ...trap/engines/engine.py.211: train: epoch 0 | batch 990/6453
+[I 2019-04-17 06:10:00] ...trap/engines/engine.py.214:       elapsed: 0:12:37 | left: 1:08:22
+[I 2019-04-17 06:10:00] ...trap/engines/engine.py.215:       process: 0.88072 | load: 0.48840
+[I 2019-04-17 06:10:00] ...trap/engines/engine.py.216:       loss: 3.59740
+[I 2019-04-17 06:10:00] ...mizers/lr_scheduler.py.103:       norm: 0.73697
+[I 2019-04-17 06:10:08] ...trap/engines/engine.py.211: train: epoch 0 | batch 1000/6453
+[I 2019-04-17 06:10:08] ...trap/engines/engine.py.214:       elapsed: 0:12:45 | left: 1:15:59
+[I 2019-04-17 06:10:08] ...trap/engines/engine.py.215:       process: 1.48935 | load: 1.09824
+[I 2019-04-17 06:10:08] ...trap/engines/engine.py.216:       loss: 2.76462
+[I 2019-04-17 06:10:08] ...mizers/lr_scheduler.py.103:       norm: 0.73571
+[I 2019-04-17 06:10:15] ...trap/engines/engine.py.211: train: epoch 0 | batch 1010/6453
+[I 2019-04-17 06:10:15] ...trap/engines/engine.py.214:       elapsed: 0:12:52 | left: 1:10:54
+[I 2019-04-17 06:10:15] ...trap/engines/engine.py.215:       process: 1.28163 | load: 0.88541
+[I 2019-04-17 06:10:15] ...trap/engines/engine.py.216:       loss: 2.93449
+[I 2019-04-17 06:10:15] ...mizers/lr_scheduler.py.103:       norm: 0.73441
+[I 2019-04-17 06:10:23] ...trap/engines/engine.py.211: train: epoch 0 | batch 1020/6453
+[I 2019-04-17 06:10:23] ...trap/engines/engine.py.214:       elapsed: 0:13:00 | left: 1:06:29
+[I 2019-04-17 06:10:23] ...trap/engines/engine.py.215:       process: 0.87139 | load: 0.47353
+[I 2019-04-17 06:10:23] ...trap/engines/engine.py.216:       loss: 3.52110
+[I 2019-04-17 06:10:23] ...mizers/lr_scheduler.py.103:       norm: 0.73398
+[I 2019-04-17 06:10:30] ...trap/engines/engine.py.211: train: epoch 0 | batch 1030/6453
+[I 2019-04-17 06:10:30] ...trap/engines/engine.py.214:       elapsed: 0:13:07 | left: 1:11:45
+[I 2019-04-17 06:10:30] ...trap/engines/engine.py.215:       process: 1.27443 | load: 0.85286
+[I 2019-04-17 06:10:30] ...trap/engines/engine.py.216:       loss: 2.92766
+[I 2019-04-17 06:10:30] ...mizers/lr_scheduler.py.103:       norm: 0.73324
+[I 2019-04-17 06:10:38] ...trap/engines/engine.py.211: train: epoch 0 | batch 1040/6453
+[I 2019-04-17 06:10:38] ...trap/engines/engine.py.214:       elapsed: 0:13:15 | left: 1:15:01
+[I 2019-04-17 06:10:38] ...trap/engines/engine.py.215:       process: 1.61861 | load: 1.21999
+[I 2019-04-17 06:10:38] ...trap/engines/engine.py.216:       loss: 3.35739
+[I 2019-04-17 06:10:38] ...mizers/lr_scheduler.py.103:       norm: 0.73379
+[I 2019-04-17 06:10:45] ...trap/engines/engine.py.211: train: epoch 0 | batch 1050/6453
+[I 2019-04-17 06:10:45] ...trap/engines/engine.py.214:       elapsed: 0:13:22 | left: 1:05:42
+[I 2019-04-17 06:10:45] ...trap/engines/engine.py.215:       process: 0.39432 | load: 0.00018
+[I 2019-04-17 06:10:45] ...trap/engines/engine.py.216:       loss: 3.74053
+[I 2019-04-17 06:10:45] ...mizers/lr_scheduler.py.103:       norm: 0.73305
+[I 2019-04-17 06:10:53] ...trap/engines/engine.py.211: train: epoch 0 | batch 1060/6453
+[I 2019-04-17 06:10:53] ...trap/engines/engine.py.214:       elapsed: 0:13:30 | left: 1:15:37
+[I 2019-04-17 06:10:53] ...trap/engines/engine.py.215:       process: 1.57130 | load: 1.18712
+[I 2019-04-17 06:10:53] ...trap/engines/engine.py.216:       loss: 3.18207
+[I 2019-04-17 06:10:53] ...mizers/lr_scheduler.py.103:       norm: 0.73281
+[I 2019-04-17 06:10:59] ...trap/engines/engine.py.211: train: epoch 0 | batch 1070/6453
+[I 2019-04-17 06:10:59] ...trap/engines/engine.py.214:       elapsed: 0:13:36 | left: 1:01:49
+[I 2019-04-17 06:10:59] ...trap/engines/engine.py.215:       process: 0.47845 | load: 0.10010
+[I 2019-04-17 06:10:59] ...trap/engines/engine.py.216:       loss: 3.64382
+[I 2019-04-17 06:10:59] ...mizers/lr_scheduler.py.103:       norm: 0.73228
+[I 2019-04-17 06:11:07] ...trap/engines/engine.py.211: train: epoch 0 | batch 1080/6453
+[I 2019-04-17 06:11:07] ...trap/engines/engine.py.214:       elapsed: 0:13:44 | left: 1:17:48
+[I 2019-04-17 06:11:07] ...trap/engines/engine.py.215:       process: 1.77762 | load: 1.37469
+[I 2019-04-17 06:11:07] ...trap/engines/engine.py.216:       loss: 3.07806
+[I 2019-04-17 06:11:07] ...mizers/lr_scheduler.py.103:       norm: 0.73171
+[I 2019-04-17 06:11:13] ...trap/engines/engine.py.211: train: epoch 0 | batch 1090/6453
+[I 2019-04-17 06:11:13] ...trap/engines/engine.py.214:       elapsed: 0:13:50 | left: 0:58:01
+[I 2019-04-17 06:11:13] ...trap/engines/engine.py.215:       process: 0.40049 | load: 0.00023
+[I 2019-04-17 06:11:13] ...trap/engines/engine.py.216:       loss: 3.37928
+[I 2019-04-17 06:11:13] ...mizers/lr_scheduler.py.103:       norm: 0.73057
+[I 2019-04-17 06:11:21] ...trap/engines/engine.py.211: train: epoch 0 | batch 1100/6453
+[I 2019-04-17 06:11:21] ...trap/engines/engine.py.214:       elapsed: 0:13:58 | left: 1:11:39
+[I 2019-04-17 06:11:21] ...trap/engines/engine.py.215:       process: 1.74943 | load: 1.34618
+[I 2019-04-17 06:11:21] ...trap/engines/engine.py.216:       loss: 3.26140
+[I 2019-04-17 06:11:21] ...mizers/lr_scheduler.py.103:       norm: 0.72957
+[I 2019-04-17 06:11:27] ...trap/engines/engine.py.211: train: epoch 0 | batch 1110/6453
+[I 2019-04-17 06:11:27] ...trap/engines/engine.py.214:       elapsed: 0:14:04 | left: 0:59:11
+[I 2019-04-17 06:11:27] ...trap/engines/engine.py.215:       process: 0.39555 | load: 0.00028
+[I 2019-04-17 06:11:27] ...trap/engines/engine.py.216:       loss: 3.25141
+[I 2019-04-17 06:11:27] ...mizers/lr_scheduler.py.103:       norm: 0.72876
+[I 2019-04-17 06:11:36] ...trap/engines/engine.py.211: train: epoch 0 | batch 1120/6453
+[I 2019-04-17 06:11:36] ...trap/engines/engine.py.214:       elapsed: 0:14:13 | left: 1:23:15
+[I 2019-04-17 06:11:36] ...trap/engines/engine.py.215:       process: 2.07752 | load: 1.67149
+[I 2019-04-17 06:11:36] ...trap/engines/engine.py.216:       loss: 3.48351
+[I 2019-04-17 06:11:36] ...mizers/lr_scheduler.py.103:       norm: 0.72820
+[I 2019-04-17 06:11:42] ...trap/engines/engine.py.211: train: epoch 0 | batch 1130/6453
+[I 2019-04-17 06:11:42] ...trap/engines/engine.py.214:       elapsed: 0:14:19 | left: 1:03:24
+[I 2019-04-17 06:11:42] ...trap/engines/engine.py.215:       process: 0.40171 | load: 0.00022
+[I 2019-04-17 06:11:42] ...trap/engines/engine.py.216:       loss: 3.35248
+[I 2019-04-17 06:11:42] ...mizers/lr_scheduler.py.103:       norm: 0.72726
+[I 2019-04-17 06:11:50] ...trap/engines/engine.py.211: train: epoch 0 | batch 1140/6453
+[I 2019-04-17 06:11:50] ...trap/engines/engine.py.214:       elapsed: 0:14:27 | left: 1:21:09
+[I 2019-04-17 06:11:50] ...trap/engines/engine.py.215:       process: 2.16631 | load: 1.76901
+[I 2019-04-17 06:11:50] ...trap/engines/engine.py.216:       loss: 2.94519
+[I 2019-04-17 06:11:50] ...mizers/lr_scheduler.py.103:       norm: 0.72619
+[I 2019-04-17 06:11:56] ...trap/engines/engine.py.211: train: epoch 0 | batch 1150/6453
+[I 2019-04-17 06:11:56] ...trap/engines/engine.py.214:       elapsed: 0:14:33 | left: 0:56:01
+[I 2019-04-17 06:11:56] ...trap/engines/engine.py.215:       process: 0.39779 | load: 0.00021
+[I 2019-04-17 06:11:56] ...trap/engines/engine.py.216:       loss: 2.96874
+[I 2019-04-17 06:11:56] ...mizers/lr_scheduler.py.103:       norm: 0.72505
+[I 2019-04-17 06:12:04] ...trap/engines/engine.py.211: train: epoch 0 | batch 1160/6453
+[I 2019-04-17 06:12:04] ...trap/engines/engine.py.214:       elapsed: 0:14:41 | left: 1:12:05
+[I 2019-04-17 06:12:04] ...trap/engines/engine.py.215:       process: 1.61002 | load: 1.20200
+[I 2019-04-17 06:12:04] ...trap/engines/engine.py.216:       loss: 3.45437
+[I 2019-04-17 06:12:04] ...mizers/lr_scheduler.py.103:       norm: 0.72437
+[I 2019-04-17 06:12:11] ...trap/engines/engine.py.211: train: epoch 0 | batch 1170/6453
+[I 2019-04-17 06:12:11] ...trap/engines/engine.py.214:       elapsed: 0:14:48 | left: 1:00:43
+[I 2019-04-17 06:12:11] ...trap/engines/engine.py.215:       process: 0.39952 | load: 0.00013
+[I 2019-04-17 06:12:11] ...trap/engines/engine.py.216:       loss: 3.15106
+[I 2019-04-17 06:12:11] ...mizers/lr_scheduler.py.103:       norm: 0.72384
+[I 2019-04-17 06:12:19] ...trap/engines/engine.py.211: train: epoch 0 | batch 1180/6453
+[I 2019-04-17 06:12:19] ...trap/engines/engine.py.214:       elapsed: 0:14:56 | left: 1:12:34
+[I 2019-04-17 06:12:19] ...trap/engines/engine.py.215:       process: 1.64439 | load: 1.24444
+[I 2019-04-17 06:12:19] ...trap/engines/engine.py.216:       loss: 3.22353
+[I 2019-04-17 06:12:19] ...mizers/lr_scheduler.py.103:       norm: 0.72328
+[I 2019-04-17 06:12:25] ...trap/engines/engine.py.211: train: epoch 0 | batch 1190/6453
+[I 2019-04-17 06:12:25] ...trap/engines/engine.py.214:       elapsed: 0:15:02 | left: 0:58:52
+[I 2019-04-17 06:12:25] ...trap/engines/engine.py.215:       process: 0.39662 | load: 0.00021
+[I 2019-04-17 06:12:25] ...trap/engines/engine.py.216:       loss: 3.12683
+[I 2019-04-17 06:12:25] ...mizers/lr_scheduler.py.103:       norm: 0.72282
+[I 2019-04-17 06:12:33] ...trap/engines/engine.py.211: train: epoch 0 | batch 1200/6453
+[I 2019-04-17 06:12:33] ...trap/engines/engine.py.214:       elapsed: 0:15:10 | left: 1:13:08
+[I 2019-04-17 06:12:33] ...trap/engines/engine.py.215:       process: 1.70867 | load: 1.31163
+[I 2019-04-17 06:12:33] ...trap/engines/engine.py.216:       loss: 3.13661
+[I 2019-04-17 06:12:33] ...mizers/lr_scheduler.py.103:       norm: 0.72223
+[I 2019-04-17 06:12:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 1210/6453
+[I 2019-04-17 06:12:39] ...trap/engines/engine.py.214:       elapsed: 0:15:16 | left: 0:51:40
+[I 2019-04-17 06:12:39] ...trap/engines/engine.py.215:       process: 0.39076 | load: 0.00026
+[I 2019-04-17 06:12:39] ...trap/engines/engine.py.216:       loss: 3.32981
+[I 2019-04-17 06:12:39] ...mizers/lr_scheduler.py.103:       norm: 0.72126
+[I 2019-04-17 06:12:48] ...trap/engines/engine.py.211: train: epoch 0 | batch 1220/6453
+[I 2019-04-17 06:12:48] ...trap/engines/engine.py.214:       elapsed: 0:15:25 | left: 1:27:35
+[I 2019-04-17 06:12:48] ...trap/engines/engine.py.215:       process: 2.41165 | load: 2.00526
+[I 2019-04-17 06:12:48] ...trap/engines/engine.py.216:       loss: 3.44893
+[I 2019-04-17 06:12:48] ...mizers/lr_scheduler.py.103:       norm: 0.72073
+[I 2019-04-17 06:12:55] ...trap/engines/engine.py.211: train: epoch 0 | batch 1230/6453
+[I 2019-04-17 06:12:55] ...trap/engines/engine.py.214:       elapsed: 0:15:32 | left: 1:07:31
+[I 2019-04-17 06:12:55] ...trap/engines/engine.py.215:       process: 0.42160 | load: 0.00020
+[I 2019-04-17 06:12:55] ...trap/engines/engine.py.216:       loss: 3.17826
+[I 2019-04-17 06:12:55] ...mizers/lr_scheduler.py.103:       norm: 0.72000
+[I 2019-04-17 06:13:03] ...trap/engines/engine.py.211: train: epoch 0 | batch 1240/6453
+[I 2019-04-17 06:13:03] ...trap/engines/engine.py.214:       elapsed: 0:15:40 | left: 1:19:24
+[I 2019-04-17 06:13:03] ...trap/engines/engine.py.215:       process: 2.08183 | load: 1.69803
+[I 2019-04-17 06:13:03] ...trap/engines/engine.py.216:       loss: 2.69969
+[I 2019-04-17 06:13:03] ...mizers/lr_scheduler.py.103:       norm: 0.71906
+[I 2019-04-17 06:13:10] ...trap/engines/engine.py.211: train: epoch 0 | batch 1250/6453
+[I 2019-04-17 06:13:10] ...trap/engines/engine.py.214:       elapsed: 0:15:47 | left: 0:59:01
+[I 2019-04-17 06:13:10] ...trap/engines/engine.py.215:       process: 0.39828 | load: 0.00021
+[I 2019-04-17 06:13:10] ...trap/engines/engine.py.216:       loss: 3.04145
+[I 2019-04-17 06:13:10] ...mizers/lr_scheduler.py.103:       norm: 0.71830
+[I 2019-04-17 06:13:20] ...trap/engines/engine.py.211: train: epoch 0 | batch 1260/6453
+[I 2019-04-17 06:13:20] ...trap/engines/engine.py.214:       elapsed: 0:15:57 | left: 1:29:15
+[I 2019-04-17 06:13:20] ...trap/engines/engine.py.215:       process: 2.28881 | load: 1.90105
+[I 2019-04-17 06:13:20] ...trap/engines/engine.py.216:       loss: 2.91027
+[I 2019-04-17 06:13:20] ...mizers/lr_scheduler.py.103:       norm: 0.71725
+[I 2019-04-17 06:13:26] ...trap/engines/engine.py.211: train: epoch 0 | batch 1270/6453
+[I 2019-04-17 06:13:26] ...trap/engines/engine.py.214:       elapsed: 0:16:03 | left: 0:59:30
+[I 2019-04-17 06:13:26] ...trap/engines/engine.py.215:       process: 0.41508 | load: 0.00020
+[I 2019-04-17 06:13:26] ...trap/engines/engine.py.216:       loss: 3.01086
+[I 2019-04-17 06:13:26] ...mizers/lr_scheduler.py.103:       norm: 0.71685
+[I 2019-04-17 06:13:34] ...trap/engines/engine.py.211: train: epoch 0 | batch 1280/6453
+[I 2019-04-17 06:13:34] ...trap/engines/engine.py.214:       elapsed: 0:16:11 | left: 1:07:06
+[I 2019-04-17 06:13:34] ...trap/engines/engine.py.215:       process: 1.31003 | load: 0.90083
+[I 2019-04-17 06:13:34] ...trap/engines/engine.py.216:       loss: 3.33044
+[I 2019-04-17 06:13:34] ...mizers/lr_scheduler.py.103:       norm: 0.71653
+[I 2019-04-17 06:13:41] ...trap/engines/engine.py.211: train: epoch 0 | batch 1290/6453
+[I 2019-04-17 06:13:41] ...trap/engines/engine.py.214:       elapsed: 0:16:18 | left: 1:02:43
+[I 2019-04-17 06:13:41] ...trap/engines/engine.py.215:       process: 0.39532 | load: 0.00018
+[I 2019-04-17 06:13:41] ...trap/engines/engine.py.216:       loss: 3.66176
+[I 2019-04-17 06:13:41] ...mizers/lr_scheduler.py.103:       norm: 0.71652
+[I 2019-04-17 06:13:48] ...trap/engines/engine.py.211: train: epoch 0 | batch 1300/6453
+[I 2019-04-17 06:13:48] ...trap/engines/engine.py.214:       elapsed: 0:16:25 | left: 1:07:53
+[I 2019-04-17 06:13:48] ...trap/engines/engine.py.215:       process: 1.54696 | load: 1.14743
+[I 2019-04-17 06:13:48] ...trap/engines/engine.py.216:       loss: 2.85138
+[I 2019-04-17 06:13:48] ...mizers/lr_scheduler.py.103:       norm: 0.71593
+[I 2019-04-17 06:13:55] ...trap/engines/engine.py.211: train: epoch 0 | batch 1310/6453
+[I 2019-04-17 06:13:55] ...trap/engines/engine.py.214:       elapsed: 0:16:32 | left: 0:53:07
+[I 2019-04-17 06:13:55] ...trap/engines/engine.py.215:       process: 0.37241 | load: 0.00017
+[I 2019-04-17 06:13:55] ...trap/engines/engine.py.216:       loss: 2.58577
+[I 2019-04-17 06:13:55] ...mizers/lr_scheduler.py.103:       norm: 0.71566
+[I 2019-04-17 06:14:03] ...trap/engines/engine.py.211: train: epoch 0 | batch 1320/6453
+[I 2019-04-17 06:14:03] ...trap/engines/engine.py.214:       elapsed: 0:16:40 | left: 1:13:42
+[I 2019-04-17 06:14:03] ...trap/engines/engine.py.215:       process: 0.41144 | load: 0.00007
+[I 2019-04-17 06:14:03] ...trap/engines/engine.py.216:       loss: 3.63170
+[I 2019-04-17 06:14:03] ...mizers/lr_scheduler.py.103:       norm: 0.71514
+[I 2019-04-17 06:14:09] ...trap/engines/engine.py.211: train: epoch 0 | batch 1330/6453
+[I 2019-04-17 06:14:09] ...trap/engines/engine.py.214:       elapsed: 0:16:46 | left: 0:51:03
+[I 2019-04-17 06:14:09] ...trap/engines/engine.py.215:       process: 0.39027 | load: 0.00018
+[I 2019-04-17 06:14:09] ...trap/engines/engine.py.216:       loss: 3.56295
+[I 2019-04-17 06:14:09] ...mizers/lr_scheduler.py.103:       norm: 0.71471
+[I 2019-04-17 06:14:17] ...trap/engines/engine.py.211: train: epoch 0 | batch 1340/6453
+[I 2019-04-17 06:14:17] ...trap/engines/engine.py.214:       elapsed: 0:16:54 | left: 1:04:15
+[I 2019-04-17 06:14:17] ...trap/engines/engine.py.215:       process: 0.39546 | load: 0.00016
+[I 2019-04-17 06:14:17] ...trap/engines/engine.py.216:       loss: 3.01407
+[I 2019-04-17 06:14:17] ...mizers/lr_scheduler.py.103:       norm: 0.71411
+[I 2019-04-17 06:14:23] ...trap/engines/engine.py.211: train: epoch 0 | batch 1350/6453
+[I 2019-04-17 06:14:23] ...trap/engines/engine.py.214:       elapsed: 0:17:00 | left: 0:48:52
+[I 2019-04-17 06:14:23] ...trap/engines/engine.py.215:       process: 0.38781 | load: 0.00019
+[I 2019-04-17 06:14:23] ...trap/engines/engine.py.216:       loss: 3.23328
+[I 2019-04-17 06:14:23] ...mizers/lr_scheduler.py.103:       norm: 0.71359
+[I 2019-04-17 06:14:32] ...trap/engines/engine.py.211: train: epoch 0 | batch 1360/6453
+[I 2019-04-17 06:14:32] ...trap/engines/engine.py.214:       elapsed: 0:17:09 | left: 1:08:40
+[I 2019-04-17 06:14:32] ...trap/engines/engine.py.215:       process: 0.39725 | load: 0.00014
+[I 2019-04-17 06:14:32] ...trap/engines/engine.py.216:       loss: 3.47215
+[I 2019-04-17 06:14:32] ...mizers/lr_scheduler.py.103:       norm: 0.71302
+[I 2019-04-17 06:14:39] ...trap/engines/engine.py.211: train: epoch 0 | batch 1370/6453
+[I 2019-04-17 06:14:39] ...trap/engines/engine.py.214:       elapsed: 0:17:16 | left: 0:58:05
+[I 2019-04-17 06:14:39] ...trap/engines/engine.py.215:       process: 0.39947 | load: 0.00021
+[I 2019-04-17 06:14:39] ...trap/engines/engine.py.216:       loss: 3.06390
+[I 2019-04-17 06:14:39] ...mizers/lr_scheduler.py.103:       norm: 0.71237
+[I 2019-04-17 06:14:47] ...trap/engines/engine.py.211: train: epoch 0 | batch 1380/6453
+[I 2019-04-17 06:14:47] ...trap/engines/engine.py.214:       elapsed: 0:17:24 | left: 1:09:19
+[I 2019-04-17 06:14:47] ...trap/engines/engine.py.215:       process: 0.79391 | load: 0.39640
+[I 2019-04-17 06:14:47] ...trap/engines/engine.py.216:       loss: 3.20202
+[I 2019-04-17 06:14:47] ...mizers/lr_scheduler.py.103:       norm: 0.71161
+[I 2019-04-17 06:14:54] ...trap/engines/engine.py.211: train: epoch 0 | batch 1390/6453
+[I 2019-04-17 06:14:54] ...trap/engines/engine.py.214:       elapsed: 0:17:31 | left: 0:56:47
+[I 2019-04-17 06:14:54] ...trap/engines/engine.py.215:       process: 0.38874 | load: 0.00023
+[I 2019-04-17 06:14:54] ...trap/engines/engine.py.216:       loss: 2.68464
+[I 2019-04-17 06:14:54] ...mizers/lr_scheduler.py.103:       norm: 0.71080
+[I 2019-04-17 06:15:03] ...trap/engines/engine.py.211: train: epoch 0 | batch 1400/6453
+[I 2019-04-17 06:15:03] ...trap/engines/engine.py.214:       elapsed: 0:17:40 | left: 1:14:15
+[I 2019-04-17 06:15:03] ...trap/engines/engine.py.215:       process: 0.83733 | load: 0.45182
+[I 2019-04-17 06:15:03] ...trap/engines/engine.py.216:       loss: 2.76946
+[I 2019-04-17 06:15:03] ...mizers/lr_scheduler.py.103:       norm: 0.71034
+[I 2019-04-17 06:15:10] ...trap/engines/engine.py.211: train: epoch 0 | batch 1410/6453
+[I 2019-04-17 06:15:10] ...trap/engines/engine.py.214:       elapsed: 0:17:47 | left: 0:54:37
+[I 2019-04-17 06:15:10] ...trap/engines/engine.py.215:       process: 0.38145 | load: 0.00020
+[I 2019-04-17 06:15:10] ...trap/engines/engine.py.216:       loss: 2.95926
+[I 2019-04-17 06:15:10] ...mizers/lr_scheduler.py.103:       norm: 0.71006
+[I 2019-04-17 06:15:19] ...trap/engines/engine.py.211: train: epoch 0 | batch 1420/6453
+[I 2019-04-17 06:15:19] ...trap/engines/engine.py.214:       elapsed: 0:17:56 | left: 1:09:34
+[I 2019-04-17 06:15:19] ...trap/engines/engine.py.215:       process: 1.59173 | load: 1.21239
+[I 2019-04-17 06:15:19] ...trap/engines/engine.py.216:       loss: 2.78239
+[I 2019-04-17 06:15:19] ...mizers/lr_scheduler.py.103:       norm: 0.70925
+[I 2019-04-17 06:15:26] ...trap/engines/engine.py.211: train: epoch 0 | batch 1430/6453
+[I 2019-04-17 06:15:26] ...trap/engines/engine.py.214:       elapsed: 0:18:03 | left: 0:58:28
+[I 2019-04-17 06:15:26] ...trap/engines/engine.py.215:       process: 0.40741 | load: 0.00017
+[I 2019-04-17 06:15:26] ...trap/engines/engine.py.216:       loss: 2.75367
+[I 2019-04-17 06:15:26] ...mizers/lr_scheduler.py.103:       norm: 0.70874
+[I 2019-04-17 06:15:34] ...trap/engines/engine.py.211: train: epoch 0 | batch 1440/6453
+[I 2019-04-17 06:15:34] ...trap/engines/engine.py.214:       elapsed: 0:18:11 | left: 1:15:33
+[I 2019-04-17 06:15:34] ...trap/engines/engine.py.215:       process: 1.81808 | load: 1.42585
+[I 2019-04-17 06:15:34] ...trap/engines/engine.py.216:       loss: 2.61199
+[I 2019-04-17 06:15:34] ...mizers/lr_scheduler.py.103:       norm: 0.70870
+[I 2019-04-17 06:15:39] ...7.egg/bootstrap/run.py.120: Traceback (most recent call last):
   File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/run.py", line 113, in main
     run(path_opts=path_opts)
   File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/run.py", line 104, in run
     engine.train()
   File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/engines/engine.py", line 117, in train
     self.train_epoch(self.model, self.dataset['train'], self.optimizer, self.epoch)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/engines/engine.py", line 170, in train_epoch
-    out = model(batch)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/nn/modules/module.py", line 489, in __call__
-    result = self.forward(*input, **kwargs)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/models/model.py", line 83, in forward
-    met_tmp = self.metrics[self.mode](cri_out, net_out, batch)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/nn/modules/module.py", line 489, in __call__
-    result = self.forward(*input, **kwargs)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/block/models/metrics/vqa_accuracies.py", line 108, in forward
-    print(cri_out)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/tensor.py", line 66, in __repr__
-    return torch._tensor_str._str(self)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 277, in _str
-    tensor_str = _tensor_str(self, indent)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 195, in _tensor_str
-    formatter = _Formatter(get_summarized_data(self) if summarize else self)
-  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/_tensor_str.py", line 84, in __init__
-    nonzero_finite_vals = torch.masked_select(tensor_view, torch.isfinite(tensor_view) & tensor_view.ne(0))
-RuntimeError: cuda runtime error (59) : device-side assert triggered at /pytorch/aten/src/THC/generated/../THCReduceAll.cuh:317
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/block.bootstrap.pytorch-0.1.4-py3.7.egg/bootstrap/engines/engine.py", line 165, in train_epoch
+    for i, batch in enumerate(batch_loader):
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/utils/data/dataloader.py", line 631, in __next__
+    idx, batch = self._get_batch()
+  File "/home/nithin_rao/CSCI_599/Virtual_Envs/lib/python3.7/site-packages/torch-1.0.1.post2-py3.7-linux-x86_64.egg/torch/utils/data/dataloader.py", line 601, in _get_batch
+    return self.data_queue.get(timeout=MP_STATUS_CHECK_INTERVAL)
+  File "/opt/anaconda3/lib/python3.7/queue.py", line 179, in get
+    self.not_empty.wait(remaining)
+  File "/opt/anaconda3/lib/python3.7/threading.py", line 300, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt
  3

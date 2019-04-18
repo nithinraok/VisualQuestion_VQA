@@ -83,6 +83,7 @@ if __name__ == "__main__":
     user="nithin_rao"
     if user=="nithin_rao":
         root_folder = "/Users/nithin_rao/MyFiles/MS/USC/Spring_2019/CSCI_599_DL/Project/"
+        root_folder = "~/CSCI
     else:
         root_folder = "/data/digbose92"
         

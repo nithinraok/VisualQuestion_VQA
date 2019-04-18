@@ -9,7 +9,7 @@ dataset:
   eval_split: val # or test
   proc_split: train # or trainval (preprocessing split, must be equal to train_split)
   nb_threads: 4
-  batch_size: 32
+  batch_size: 64
   nans: 3000
   minwcount: 0
   nlp: mcb
@@ -77,7 +77,7 @@ model:
       fusion:
         type: block
         input_dims: [4800, 2048]
-        output_dim: 2 #Fixed
+        output_dim: 3000 #Fixed
         mm_dim: 1600
         chunks: 20
         rank: 10

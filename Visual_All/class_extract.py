@@ -14,10 +14,10 @@ def modify_entry(label_list,entry):
     entry['Label_name']=label_name
     return(entry)
 
-pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/train_target.pkl"
-val_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/val_target.pkl"
-label_map_file="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/trainval_label2ans.pkl"
-num_classes_select=1000
+pickle_file="../common_resources/train_target.pkl"
+val_pickle_file="../common_resources/val_target.pkl"
+label_map_file="../common_resources/trainval_label2ans.pkl"
+num_classes_select=2
 dataroot='data'
 
 data=pickle.load(open(pickle_file,'rb'))
@@ -93,16 +93,16 @@ print(len(list(class_list_set)))
 intersect_list=set(label_sampled).intersection(list(class_list_set))
 
 
-with open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/train_target_top_1000_ans.pkl','wb') as f:
+with open('../common_resources/train_target_yes_no_bin.pkl','wb') as f:
     pickle.dump(entry_1000_classes,f)
-with open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/validation_target_top_1000_ans.pkl','wb') as f:
+with open('../common_resources/validation_target_yes_no_bin.pkl','wb') as f:
     pickle.dump(entry_validation_1000_classes,f)
 
 
 
 print('Resampling the training json data')
 train_question_path = os.path.join(
-        dataroot, 'v2_OpenEnded_mscoco_train2014_questions.json')
+        dataroot, 'OpenEnded_mscoco_train2014_questions.json')
 train_questions = sorted(json.load(open(train_question_path))['questions'],
                        key=lambda x: x['question_id'])
 
@@ -117,14 +117,14 @@ print(len(question_train_set))
 print(len(entry_1000_classes))
 train_questions_dict={}
 train_questions_dict['questions']=question_train_set
-with open('data/v2_OpenEnded_mscoco_train2014_1000_questions.json', 'w') as fp:
+with open('data/OpenEnded_mscoco_train2014_2_questions.json', 'w') as fp:
     json.dump(train_questions_dict, fp)
 
 
 
 print('Resampling the validation json data')
 valid_question_path = os.path.join(
-        dataroot, 'v2_OpenEnded_mscoco_val2014_questions.json')
+        dataroot, 'OpenEnded_mscoco_val2014_questions.json')
 valid_questions = sorted(json.load(open(valid_question_path))['questions'],
                        key=lambda x: x['question_id'])
 
@@ -139,7 +139,7 @@ print(len(question_valid_set))
 print(len(entry_validation_1000_classes))
 valid_questions_dict={}
 valid_questions_dict['questions']=question_valid_set
-with open('data/v2_OpenEnded_mscoco_val2014_1000_questions.json', 'w') as fp:
+with open('data/OpenEnded_mscoco_val2014_2_questions.json', 'w') as fp:
     json.dump(valid_questions_dict, fp)
 
 

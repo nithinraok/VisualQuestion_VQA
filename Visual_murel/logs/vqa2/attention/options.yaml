@@ -9,7 +9,7 @@ dataset:
   eval_split: val
   proc_split: train
   nb_threads: 4
-  batch_size: 32
+  batch_size: 64
   nans: 3000
   minwcount: 0
   nlp: mcb
@@ -79,7 +79,7 @@ model:
         input_dims:
         - 4800
         - 2048
-        output_dim: 2
+        output_dim: 3000
         mm_dim: 1600
         chunks: 20
         rank: 10
