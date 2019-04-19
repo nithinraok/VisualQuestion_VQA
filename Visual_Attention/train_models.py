@@ -91,8 +91,8 @@ def single_batch_run(model,train_dataloader,valid_dataloader,device,output_folde
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval', action='store_true', help='set this to evaluate.')
-    parser.add_argument('--epochs', type=int, default=30)
-    parser.add_argument('--num_hid', type=int, default=512) # they used 1024
+    parser.add_argument('--epochs', type=int, default=40)
+    parser.add_argument('--num_hid', type=int, default=1280) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
     parser.add_argument('--dropout_G', type=float, default=0.2)
@@ -107,8 +107,8 @@ def parse_args():
     parser.add_argument('--optimizer', type=str, default='Adam', help='Adam, Adamax, Adadelta, RMSprop')
     parser.add_argument('--initializer', type=str, default='kaiming_normal')
     parser.add_argument('--seed', type=int, default=9731, help='random seed')
-    parser.add_argument('--bert_option', type=bool, default=True, help='bert option')
-    
+    parser.add_argument('--bert_option', type=bool, default=False, help='bert option')
+    parser.add_argument('--mfb_out_dim', type=int, default=1000, help='mfb output dimension')
     args = parser.parse_args()
     return args
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_rcnn_hid_512_bert_yes_no_ADAM"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_uni/results_rcnn_hid_1280_mfh_YES_NO_ADAM"
     train_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/train36_imgid2idx.pkl"
     valid_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl"
     seed = 0
@@ -152,13 +152,15 @@ if __name__ == '__main__':
     total_step=len(train_loader)
 
     #model related issues
-    model = attention_bert_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+    #model = attention_bert_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+                               #activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
+                               #drop_W=args.dropout_W, drop_C=args.dropout_C)
+    model=attention_mfh(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
-                               drop_W=args.dropout_W, drop_C=args.dropout_C)
-
+                               drop_W=args.dropout_W, drop_C=args.dropout_C,mfb_out_dim=args.mfb_out_dim)
     #model=model.to(device_select)
     print(model)
-    #input()
+    input()
 
     if args.initializer == 'xavier_normal':
         model.apply(weights_init_xn)
@@ -169,7 +171,7 @@ if __name__ == '__main__':
     elif args.initializer == 'kaiming_uniform':
         model.apply(weights_init_ku)
 
-    #model.w_emb.init_embedding(npy_file)
+    model.w_emb.init_embedding(npy_file)
     #if torch.cuda.device_count() > 1:
     print("Let's use", torch.cuda.device_count(), "GPUs!")
     model=torch.nn.DataParallel(model, device_ids=device_ids).to(device)

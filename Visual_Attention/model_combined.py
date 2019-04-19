@@ -94,7 +94,8 @@ class VQA_Model_MFH(nn.Module):
 
         return: logits, not probs
         """   
-        q_emb = self.bert_emb(q)   # run Linear + Bert on document embeddings [batch, q_dim]
+        w_emb = self.w_emb(q)       # get word embeddings
+        q_emb = self.q_emb(w_emb)   # run GRU on word embeddings [batch, q_dim]  # run Linear + Bert on document embeddings [batch, q_dim]
         #print(q_emb.size())
 
         att = self.v_att(v, q_emb) # [batch, 1, v_dim]
@@ -112,8 +113,8 @@ class VQA_Model_MFH(nn.Module):
         return logits
 
 
-
-def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=True):
+############# ATTENTION BASELINE ############
+def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=False):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
     q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
     #bert_emb=BertEmbedding(in_dim=7168,num_hid=num_hid)
@@ -129,6 +130,9 @@ def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , dro
     classifier = SimpleClassifier(in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
     return(VQA_Model(w_emb,q_emb,v_att,q_net,v_net,classifier))
 
+
+
+########## ATTENTION + BERT ############
 def attention_bert_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=False):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
     #q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
@@ -146,7 +150,9 @@ def attention_bert_baseline(dataset, num_hid, dropout, norm, activation, drop_L 
     return(VQA_Model_Bert(bert_emb,v_att,q_net,v_net,classifier))
 
 
-def attention_mfh(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, mfb_out_dim, bidirect_val=True):
+
+######## ATTENTION + MFH ###########
+def attention_mfh(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, mfb_out_dim, bidirect_val=False):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
     q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
     v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, bidirect=bidirect_val,norm= norm, act= activation)
@@ -158,7 +164,7 @@ def attention_mfh(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, 
         
     v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
     mfh_net=mfh_baseline(QUEST_EMBED=num_hid,VIS_EMBED=num_hid,MFB_OUT_DIM=mfb_out_dim)
-    classifier = SimpleClassifier(in_dim=mfb_out_dim, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+    classifier = SimpleClassifier(in_dim=2*mfb_out_dim, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
     return(VQA_Model_MFH(w_emb,q_emb,v_att,q_net,v_net,mfh_net,classifier))
     #return VQA_Model_Bert(bert_emb, v_att, q_net, v_net, classifier)
 

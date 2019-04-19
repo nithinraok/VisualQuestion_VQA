@@ -7,7 +7,7 @@ from flair.data import Sentence
 import os 
 import h5py
 
-def extract_bert_features(json_file,dataroot_folder,choice="yes_no",split="val"):
+def extract_bert_features(json_file,dataroot_folder,choice="yes_no",split="train"):
     questions=json.load(open(json_file))['questions']
 
     question_ids=[quest['question_id'] for quest in questions]
@@ -29,7 +29,7 @@ def extract_bert_features(json_file,dataroot_folder,choice="yes_no",split="val")
     h5f.close()
 
 if __name__ == "__main__":
-    json_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/v2_OpenEnded_mscoco_val2014_yes_no_questions.json"
-    dataroot_folder="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
+    json_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/v2_OpenEnded_mscoco_train2014_1000_questions.json"
+    dataroot_folder="/data/digbose92/VQA/COCO/train_hdf5_COCO"
     extract_bert_features(json_file,dataroot_folder)
     
