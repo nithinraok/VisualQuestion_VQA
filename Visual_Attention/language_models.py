@@ -83,7 +83,7 @@ class QuestionEmbedding(nn.Module):
 
 class BertEmbedding(nn.Module):
     
-    def __init__(self, in_dim=7168, num_hid=1024):
+    def __init__(self, in_dim=3072, num_hid=1024):
         super(BertEmbedding, self).__init__()
         self.linear_bert=nn.Linear(in_dim,num_hid)
     def forward(self, x):

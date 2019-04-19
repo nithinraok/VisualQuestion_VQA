@@ -107,6 +107,8 @@ def parse_args():
     parser.add_argument('--optimizer', type=str, default='Adam', help='Adam, Adamax, Adadelta, RMSprop')
     parser.add_argument('--initializer', type=str, default='kaiming_normal')
     parser.add_argument('--seed', type=int, default=9731, help='random seed')
+    parser.add_argument('--bert_option', type=bool, default=True, help='bert option')
+    
     args = parser.parse_args()
     return args
 
@@ -117,7 +119,7 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_rcnn_hid_512_1000_ADAM"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_rcnn_hid_512_bert_yes_no_ADAM"
     train_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/train36_imgid2idx.pkl"
     valid_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl"
     seed = 0
@@ -140,8 +142,8 @@ if __name__ == '__main__':
     
     
     #train dataset
-    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,rcnn_pkl_path=train_rcnn_pickle_file,choice='train',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
-    valid_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,rcnn_pkl_path=valid_rcnn_pickle_file,choice='val',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
+    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,bert_option=args.bert_option,rcnn_pkl_path=train_rcnn_pickle_file,choice='train',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
+    valid_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,bert_option=args.bert_option,rcnn_pkl_path=valid_rcnn_pickle_file,choice='val',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
     
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=12)
     val_loader=DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=12)
@@ -150,7 +152,7 @@ if __name__ == '__main__':
     total_step=len(train_loader)
 
     #model related issues
-    model = attention_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+    model = attention_bert_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
                                drop_W=args.dropout_W, drop_C=args.dropout_C)
 
@@ -168,9 +170,9 @@ if __name__ == '__main__':
         model.apply(weights_init_ku)
 
     #model.w_emb.init_embedding(npy_file)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model=torch.nn.DataParallel(model, device_ids=device_ids).to(device)
+    #if torch.cuda.device_count() > 1:
+    print("Let's use", torch.cuda.device_count(), "GPUs!")
+    model=torch.nn.DataParallel(model, device_ids=device_ids).to(device)
     
     if args.optimizer == 'Adadelta':
         optim = torch.optim.Adadelta(model.parameters(), rho=0.95, eps=1e-6, weight_decay=args.weight_decay)
@@ -201,6 +203,7 @@ if __name__ == '__main__':
 
             feat = feat.to(device)
             quest = quest.to(device)
+            #print(type(quest))
             target = target.to(device) # true labels
 
             pred = model(feat, quest, target)

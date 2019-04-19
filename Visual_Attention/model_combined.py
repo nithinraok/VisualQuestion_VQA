@@ -10,6 +10,7 @@ import dataset_vqa
 from dataset_vqa import Dictionary, VQAFeatureDataset
 from dataset_image_vqa import VQADataset
 import torchvision.transforms as transforms
+from fusion_models import mfh_baseline
 # Dropout p: probability of an element to be zeroed. Default: 0.5
 """
 Batch size first is required for all the images
@@ -74,6 +75,44 @@ class VQA_Model_Bert(nn.Module):
         logits = self.classifier(joint_repr)
         return logits
 
+class VQA_Model_MFH(nn.Module):
+    def __init__(self, w_emb, q_emb, v_att, q_net, v_net, mfh_net, classifier):
+        super(VQA_Model_MFH, self).__init__()
+        self.w_emb = w_emb
+        self.q_emb = q_emb
+        self.v_att = v_att
+        self.q_net = q_net
+        self.v_net = v_net
+        self.mfh_net = mfh_net
+        self.classifier = classifier
+
+    def forward(self, v, q, labels):
+        """Forward
+
+        v: [batch, num_objs, obj_dim]
+        q: [batch_size, seq_length]
+
+        return: logits, not probs
+        """   
+        q_emb = self.bert_emb(q)   # run Linear + Bert on document embeddings [batch, q_dim]
+        #print(q_emb.size())
+
+        att = self.v_att(v, q_emb) # [batch, 1, v_dim]
+        v_emb = (att * v).sum(1) # [batch, v_dim]
+
+        q_repr = self.q_net(q_emb)
+        v_repr = self.v_net(v_emb)
+
+        joint_repr=self.mfh_net(q_repr,v_repr)
+        #joint_repr = q_repr * v_repr
+
+        #invoke MFH for fusion of q_repr and v_repr
+
+        logits = self.classifier(joint_repr)
+        return logits
+
+
+
 def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=True):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
     q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
@@ -89,6 +128,38 @@ def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , dro
     v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
     classifier = SimpleClassifier(in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
     return(VQA_Model(w_emb,q_emb,v_att,q_net,v_net,classifier))
+
+def attention_bert_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=False):
+    w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
+    #q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
+    bert_emb=BertEmbedding(in_dim=3072,num_hid=num_hid)
+
+    v_att = Base_Att(v_dim= dataset.v_dim, q_dim= num_hid, num_hid= num_hid, dropout= dropout, bidirect=bidirect_val,norm= norm, act= activation)
+    if(bidirect_val is False):
+        q_net = FCNet([num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        #v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+    else:
+        q_net = FCNet([2*num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        
+    v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+    classifier = SimpleClassifier(in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+    return(VQA_Model_Bert(bert_emb,v_att,q_net,v_net,classifier))
+
+
+def attention_mfh(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, mfb_out_dim, bidirect_val=True):
+    w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
+    q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
+    v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, bidirect=bidirect_val,norm= norm, act= activation)
+    if(bidirect_val is False):
+        q_net = FCNet([num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        #v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+    else:
+        q_net = FCNet([2*num_hid, num_hid], dropout= drop_L, norm= norm, act= activation)
+        
+    v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
+    mfh_net=mfh_baseline(QUEST_EMBED=num_hid,VIS_EMBED=num_hid,MFB_OUT_DIM=mfb_out_dim)
+    classifier = SimpleClassifier(in_dim=mfb_out_dim, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
+    return(VQA_Model_MFH(w_emb,q_emb,v_att,q_net,v_net,mfh_net,classifier))
     #return VQA_Model_Bert(bert_emb, v_att, q_net, v_net, classifier)
 
 def weights_init_xn(m):
