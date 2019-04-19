@@ -30,7 +30,7 @@ def load_folder(folder, suffix):
 
 
 def load_imageid(folder):
-    images = load_folder(folder, 'png')
+    images = load_folder(folder, 'jpg')
     img_ids = set()
     for img in images:
         img_id = int(img.split('/')[-1].split('.')[0].split('_')[-1])
@@ -38,7 +38,7 @@ def load_imageid(folder):
     return img_ids
 
 def get_imageid_path(folder,name):
-    images = load_folder(folder, 'png')
+    images = load_folder(folder, 'jpg')
     imgid_path={}
     img_ids = set()
     for img in images:
@@ -136,8 +136,8 @@ def get_question_imgid(dataroot,name):
 
 def get_questionid_question(dataroot):
 
-    train_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_train2014_questions.json'))['questions']
-    val_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_val2014_questions.json'))['questions']
+    train_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_train2014_questions_all.json'))['questions']
+    val_question=json.load(open(dataroot+'/v2_OpenEnded_mscoco_val2014_questions_all.json'))['questions']
 
     val_questionid_question={}
     for item in val_question:

@@ -154,7 +154,17 @@ class VQAFeatureDataset(Dataset):
         ques_token = self.tokenize(question)
         ques_token = self.tensorize(ques_token)
 
-        sample = imread(img_file)[:,:,:3]
+        sample = imread(img_file)#[:,:,:3]
+        if(len(sample.shape)<3):
+            l_=sample.shape[0]
+            w_=sample.shape[1]
+            t_=np.zeros((l_,w_,3))
+            t_[:,:,1]=sample
+            t_[:,:,2]=sample
+            t_[:,:,0]=sample
+            sample=t_.astype(np.uint8)
+    
+
         if self.transforms:
             sample = self.transforms(sample)
 

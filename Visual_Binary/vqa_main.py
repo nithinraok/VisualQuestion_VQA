@@ -81,6 +81,10 @@ def main(args):
 #    img_sample, ques_token, target=next(iter(train_loader))
 
     #Training starts
+    if torch.cuda.device_count() > 1:
+          print("Let's use", torch.cuda.device_count(), "GPUs!")
+          fusion_network=nn.DataParallel(fusion_network)
+
     fusion_network.to(device) 
     #val_loss,accuracy = evaluate_val(fusion_network,eval_loader,criterion,device)
     for epoch in range(args.epochs):

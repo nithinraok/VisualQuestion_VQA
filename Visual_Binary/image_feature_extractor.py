@@ -27,8 +27,8 @@ def image_feats_converter(filenames):
         train_imgids = cPickle.load(open(filenames['train_ids_file'],'rb'))
         val_imgids = cPickle.load(open(filenames['val_ids_file'],'rb'))
     else:
-        train_imgids = utils.load_imageid('data/train2017')
-        val_imgids = utils.load_imageid('data/val2017')
+        train_imgids = utils.load_imageid('data/train2014')
+        val_imgids = utils.load_imageid('data/val2014')
         cPickle.dump(train_imgids, open(filenames['train_ids_file'], 'wb'))
         cPickle.dump(val_imgids, open(filenames['val_ids_file'], 'wb'))
 
