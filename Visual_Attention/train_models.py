@@ -92,7 +92,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval', action='store_true', help='set this to evaluate.')
     parser.add_argument('--epochs', type=int, default=30)
-    parser.add_argument('--num_hid', type=int, default=1024) # they used 1024
+    parser.add_argument('--num_hid', type=int, default=512) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
     parser.add_argument('--dropout_G', type=float, default=0.2)
@@ -117,7 +117,9 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_resnet_152_hid_1024_YES_NO_ADAM"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_bidirect/results_rcnn_hid_512_1000_ADAM"
+    train_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/train36_imgid2idx.pkl"
+    valid_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl"
     seed = 0
     args = parse_args()
     #device_selection
@@ -138,11 +140,11 @@ if __name__ == '__main__':
     
     
     #train dataset
-    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,choice='train',dataroot=data_root,arch_choice="resnet152",layer_option="pool")
-    valid_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,choice='val',dataroot=data_root,arch_choice="resnet152",layer_option="pool")
+    train_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,rcnn_pkl_path=train_rcnn_pickle_file,choice='train',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
+    valid_dataset=Dataset_VQA(img_root_dir=image_root_dir,feats_data_path=feats_data_path,dictionary=dictionary,rcnn_pkl_path=valid_rcnn_pickle_file,choice='val',dataroot=data_root,arch_choice="rcnn",layer_option="pool")
     
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=12)
-    val_loader=DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=8)
+    val_loader=DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=12)
     print(len(train_loader))
     print(len(val_loader))
     total_step=len(train_loader)
@@ -154,7 +156,8 @@ if __name__ == '__main__':
 
     #model=model.to(device_select)
     print(model)
-    
+    #input()
+
     if args.initializer == 'xavier_normal':
         model.apply(weights_init_xn)
     elif args.initializer == 'xavier_uniform':
@@ -164,7 +167,7 @@ if __name__ == '__main__':
     elif args.initializer == 'kaiming_uniform':
         model.apply(weights_init_ku)
 
-    model.w_emb.init_embedding(npy_file)
+    #model.w_emb.init_embedding(npy_file)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         model=torch.nn.DataParallel(model, device_ids=device_ids).to(device)

@@ -26,7 +26,6 @@ class WordEmbedding(nn.Module):
         emb = self.dropout(emb)
         return emb
 
-
 class QuestionEmbedding(nn.Module):
     def __init__(self, in_dim, num_hid, nlayers, bidirect, dropout, rnn_type='GRU'):
         """Module for question embedding
@@ -81,3 +80,11 @@ class QuestionEmbedding(nn.Module):
         output, hidden = self.rnn(x, hidden)
         #print(output.size())
         return output
+
+class BertEmbedding(nn.Module):
+    
+    def __init__(self, in_dim=7168, num_hid=1024):
+        super(BertEmbedding, self).__init__()
+        self.linear_bert=nn.Linear(in_dim,num_hid)
+    def forward(self, x):
+        return (self.linear_bert(x))

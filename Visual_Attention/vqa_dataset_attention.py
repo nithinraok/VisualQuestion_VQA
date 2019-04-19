@@ -18,6 +18,9 @@ from models import *
 from tqdm import tqdm
 import time
 import h5py
+from flair.embeddings import BertEmbeddings,DocumentPoolEmbeddings
+from flair.data import Sentence
+import pickle 
 
 def _create_entry(question, answer):
     answer.pop('image_id')
@@ -30,10 +33,10 @@ def _create_entry(question, answer):
     return entry
 def _load_dataset(dataroot,name):
     question_path = os.path.join(
-        dataroot, 'v2_OpenEnded_mscoco_%s2014_yes_no_questions.json' % name)
+        dataroot, 'v2_OpenEnded_mscoco_%s2014_1000_questions.json' % name)
     questions = sorted(json.load(open(question_path))['questions'],
                        key=lambda x: x['question_id'])
-    answer_path = os.path.join(dataroot, '%s_target_yes_no_ans.pkl' % name)
+    answer_path = os.path.join(dataroot, '%s_target_top_1000_ans.pkl' % name)
     answers = cPickle.load(open(answer_path, 'rb'))
     answers = sorted(answers, key=lambda x: x['question_id'])
     utils.assert_eq(len(questions), len(answers))
@@ -51,7 +54,7 @@ def _load_dataset(dataroot,name):
 class Dataset_VQA(Dataset):
     """Dataset for VQA applied to the attention case with image features in .hdf5 file 
     """
-    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,num_classes=2,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
+    def __init__(self,img_root_dir,feats_data_path,dictionary,dataroot,rcnn_pkl_path=None,num_classes=1000,filename_len=12,choice='train',arch_choice='resnet152',layer_option='pool',transform_set=None):
 
         #initializations
         self.data_root=dataroot
@@ -65,18 +68,26 @@ class Dataset_VQA(Dataset):
         self.layer_option=layer_option 
         self.filename_len=filename_len
         self.num_ans_candidates=num_classes
-        #operations (reading features and making the entries)
-        #train_filenames_resnet152.txt
-        #reading the features
-        print('Loading the hdf5 features')
+        self.rcnn_pkl_path=rcnn_pkl_path
+        #self.bert=BertEmbeddings('bert-base-uncased')
+        #self.doc_bert=DocumentPoolEmbeddings([self.bert])
         start_time=time.time()
-        h5_path = os.path.join(feats_data_path,self.choice+'_feats_'+self.arch+'_'+self.layer_option+'.hdf5')
-        file_path=os.path.join(feats_data_path,self.choice+'_filenames_'+self.arch+'.txt')
-        fl_p=open(file_path)
-        self.file_list=list(fl_p.readlines())
-        self.file_list=[filename.split("\n")[0] for filename in self.file_list]
-        hf=h5py.File(h5_path)
-        self.features=hf.get('feats')
+        if(self.rcnn_pkl_path is not None):
+            print('Loading the hdf5 features from rcnn')
+            self.pkl_data=pickle.load(open(self.rcnn_pkl_path,'rb'))
+            h5_path=os.path.join(feats_data_path,self.choice+'_rcnn_36.hdf5')
+            hf=h5py.File(h5_path)
+            self.features=hf.get('image_features')
+        else:
+            print('Loading the hdf5 features from resnet152')
+            
+            h5_path = os.path.join(feats_data_path,self.choice+'_feats_'+self.arch+'_'+self.layer_option+'.hdf5')
+            file_path=os.path.join(feats_data_path,self.choice+'_filenames_'+self.arch+'.txt')
+            fl_p=open(file_path)
+            self.file_list=list(fl_p.readlines())
+            self.file_list=[filename.split("\n")[0] for filename in self.file_list]
+            hf=h5py.File(h5_path)
+            self.features=hf.get('feats')
         #with h5py.File(h5_path, 'r') as hf:
         #    self.features = np.array(hf.get('feats'))
         end_time=time.time()
@@ -138,12 +149,23 @@ class Dataset_VQA(Dataset):
         image_id=entry['image_id']
         question_sent=entry['question']
 
-        filename='COCO_'+self.choice+'2014_'+str(image_id).zfill(self.filename_len)+'.jpg'
-        idx=self.file_list.index(os.path.join(self.img_dir,filename))
-        
-        feat=torch.from_numpy(self.features[idx])
-        feat=feat.view(feat.size(0),feat.size(1)*feat.size(2))
-        feat=feat.transpose(1,0)
+        #print(type(question_sent))
+        #sentence=Sentence(question_sent)
+        #print('Here')
+        #self.bert.embed(sentence)
+        #print(sentence[0].embedding.shape)
+        if(self.rcnn_pkl_path is not None):
+            if(image_id in self.pkl_data):
+                idx=self.pkl_data[image_id]
+                feat=torch.from_numpy(self.features[idx])
+                #print(feat.size())
+        else:
+            filename='COCO_'+self.choice+'2014_'+str(image_id).zfill(self.filename_len)+'.jpg'
+            idx=self.file_list.index(os.path.join(self.img_dir,filename))
+            
+            feat=torch.from_numpy(self.features[idx])
+            feat=feat.view(feat.size(0),feat.size(1)*feat.size(2))
+            feat=feat.transpose(1,0)
         target = torch.zeros(self.num_classes)
         if label is not None:
             target.scatter_(0,label,1)

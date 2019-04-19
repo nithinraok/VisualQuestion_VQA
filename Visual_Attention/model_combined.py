@@ -3,7 +3,7 @@ sys.path.insert(0, '/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All')
 import torch
 import torch.nn as nn
 from attention_models import Base_Att
-from language_models import WordEmbedding, QuestionEmbedding
+from language_models import WordEmbedding, QuestionEmbedding, BertEmbedding
 from classifier_models import SimpleClassifier, ClassifierAdv
 from fc import FCNet, GTH
 import dataset_vqa
@@ -45,9 +45,39 @@ class VQA_Model(nn.Module):
         logits = self.classifier(joint_repr)
         return logits
 
+class VQA_Model_Bert(nn.Module):
+    def __init__(self, bert_emb, v_att, q_net, v_net, classifier):
+        super(VQA_Model_Bert, self).__init__()
+        self.bert_emb = bert_emb
+        self.v_att = v_att
+        self.q_net = q_net
+        self.v_net = v_net
+        self.classifier = classifier
+
+    def forward(self, v, q, labels):
+        """Forward
+
+        v: [batch, num_objs, obj_dim]
+        q: [batch_size, seq_length]
+
+        return: logits, not probs
+        """   
+        q_emb = self.bert_emb(q)   # run Linear + Bert on document embeddings [batch, q_dim]
+        #print(q_emb.size())
+
+        att = self.v_att(v, q_emb) # [batch, 1, v_dim]
+        v_emb = (att * v).sum(1) # [batch, v_dim]
+
+        q_repr = self.q_net(q_emb)
+        v_repr = self.v_net(v_emb)
+        joint_repr = q_repr * v_repr
+        logits = self.classifier(joint_repr)
+        return logits
+
 def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , drop_G, drop_W, drop_C, bidirect_val=True):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, emb_dim=300, dropout=drop_W)
     q_emb = QuestionEmbedding(in_dim=300, num_hid=num_hid, nlayers=1, bidirect=bidirect_val, dropout=drop_G, rnn_type='GRU')
+    #bert_emb=BertEmbedding(in_dim=7168,num_hid=num_hid)
 
     v_att = Base_Att(v_dim= dataset.v_dim, q_dim= q_emb.num_hid, num_hid= num_hid, dropout= dropout, bidirect=bidirect_val,norm= norm, act= activation)
     if(bidirect_val is False):
@@ -58,8 +88,8 @@ def attention_baseline(dataset, num_hid, dropout, norm, activation, drop_L , dro
         
     v_net = FCNet([dataset.v_dim, num_hid], dropout= drop_L, norm= norm, act= activation)
     classifier = SimpleClassifier(in_dim=num_hid, hid_dim=2 * num_hid, out_dim=dataset.num_ans_candidates, dropout=drop_C, norm= norm, act= activation)
-   
-    return VQA_Model(w_emb, q_emb, v_att, q_net, v_net, classifier)
+    return(VQA_Model(w_emb,q_emb,v_att,q_net,v_net,classifier))
+    #return VQA_Model_Bert(bert_emb, v_att, q_net, v_net, classifier)
 
 def weights_init_xn(m):
     if isinstance(m, nn.Linear):
