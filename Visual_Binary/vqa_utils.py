@@ -64,8 +64,8 @@ def main_run(dataroot,pkl_filename,glove_filename,filenames_dict,image_filenames
         answers = train_answers + validation_answers
         occurence = filter_answers(answers, 9)
         ans2label = create_ans2label(occurence, 'trainval')
-        train_target=compute_target(train_answers, ans2label, 'train')
-        validation_target=compute_target(validation_answers, ans2label, 'val')
+        #train_target=compute_target(train_answers, ans2label, 'train')
+        #validation_target=compute_target(validation_answers, ans2label, 'val')
 
 
     #image feature extraction here based on functions in image_feature_extractor
