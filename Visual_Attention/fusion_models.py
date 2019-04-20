@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class mfh_baseline(nn.Module):
-    def __init__(self,QUEST_EMBED,VIS_EMBED,MFB_FACTOR_NUM=5,MFB_OUT_DIM=1000,MFB_DROPOUT_RATIO=0.1):
+    def __init__(self,QUEST_EMBED,VIS_EMBED,MFB_FACTOR_NUM=5,MFB_OUT_DIM=1000,MFB_DROPOUT_RATIO=0.1,NUM_OUTPUT_UNITS=2):
         super(mfh_baseline, self).__init__()
         
         self.JOINT_EMB_SIZE = MFB_FACTOR_NUM * MFB_OUT_DIM

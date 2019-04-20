@@ -119,7 +119,7 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_uni/results_rcnn_hid_1280_mfh_YES_NO_ADAM"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_uni/results_rcnn_hid_1280_mfh_classifier_YES_NO_ADAM"
     train_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/train36_imgid2idx.pkl"
     valid_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl"
     seed = 0
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     #model = attention_bert_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                #activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
                                #drop_W=args.dropout_W, drop_C=args.dropout_C)
-    model=attention_mfh(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+    model=attention_mfh_classifier(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
                                drop_W=args.dropout_W, drop_C=args.dropout_C,mfb_out_dim=args.mfb_out_dim)
     #model=model.to(device_select)

@@ -194,7 +194,7 @@ class Dataset_VQA(Dataset):
             return(feat,quest_feats,question_sent,target)
         else:
 
-            return(feat,question,question_sent,target)
+            return(feat,question,question_sent,question_id,target)
 
     def __len__(self):
         return(len(self.entries))

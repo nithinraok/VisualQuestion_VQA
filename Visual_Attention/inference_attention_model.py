@@ -12,6 +12,11 @@ from vqa_dataset_attention import *
 from model_combined import *
 from collections import OrderedDict 
 import pandas as pd
+torch.multiprocessing.set_sharing_strategy('file_system')
+import json
+#import resource
+#rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
+#resource.setrlimit(resource.RLIMIT_NOFILE, (2048, rlimit[1]))
 
 def instance_bce_with_logits(logits, labels):
     assert logits.dim() == 2
@@ -32,7 +37,9 @@ def compute_score_with_logits(logits, labels):
 def evaluate_attention_model(args):
 
     class_data=pd.read_csv(args.class_metadata_file)
-    class_label_map=class_data['Label_names'].tolist()
+    class_label_map={0:"no",1:"yes"}
+
+    #class_label_map=class_data['Label_names'].tolist()
 
     print('Loading model checkpoint')
     attention_model_checkpoint=torch.load(args.model_path)
@@ -43,15 +50,15 @@ def evaluate_attention_model(args):
         new_state_dict[name] = v
     print('Model checkpoint loaded')
     
-    
+    print(new_state_dict.keys())
     print('Loading Dictionary')
     dictionary=Dictionary.load_from_file(args.pickle_path)
 
     train_dataset=Dataset_VQA(img_root_dir=args.image_root_dir,feats_data_path=args.feats_data_path,dictionary=dictionary,choice='train',dataroot=args.data_root,arch_choice=args.arch_choice,layer_option=args.layer_option)
     print('Loading the attention model')
-    attention_model = attention_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+    attention_model = attention_mfh(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
-                               drop_W=args.dropout_W, drop_C=args.dropout_C)
+                               drop_W=args.dropout_W, drop_C=args.dropout_C,mfb_out_dim=args.mfb_out_dim)
     attention_model.load_state_dict(new_state_dict)
     attention_model.eval()
 
@@ -63,7 +70,7 @@ def evaluate_attention_model(args):
         """use extracted features as a Dataset and Dataloader
         """
         print('Using validation features')
-        dataset_temp=Dataset_VQA(img_root_dir=args.image_root_dir,feats_data_path=args.feats_data_path,dictionary=dictionary,choice=args.choice,dataroot=args.data_root,arch_choice=args.arch_choice,layer_option=args.layer_option)
+        dataset_temp=Dataset_VQA(img_root_dir=args.image_root_dir,feats_data_path=args.feats_data_path,dictionary=dictionary,bert_option=args.bert_option,rcnn_pkl_path=args.rcnn_path,choice=args.choice,dataroot=args.data_root,arch_choice=args.arch_choice,layer_option=args.layer_option)
         loader=DataLoader(dataset_temp, batch_size=args.batch_size, shuffle=False, num_workers=10)
         print('Length of validation dataloader:', len(loader))
         upper_bound = 0
@@ -74,13 +81,15 @@ def evaluate_attention_model(args):
         actual_class_labels=[]
         predicted_class_labels=[]
         question_set=[]
+        question_id=[]
         for data in tqdm(loader):
 
-            feat,quest,quest_sent,target = data
-            
+            feat,quest,quest_sent,quest_id,target = data
             feat = feat.to(args.device)
             quest = quest.to(args.device)
             target = target.to(args.device)
+            
+            question_id=question_id+quest_id.tolist()
             pred = attention_model(feat, quest, target)
             question_set=question_set+list(quest_sent)
             loss = instance_bce_with_logits(pred, target)
@@ -97,9 +106,16 @@ def evaluate_attention_model(args):
 
         class_predicted_name=[class_label_map[id] for id in predicted_class_labels]
         class_actual_name=[class_label_map[id] for id in actual_class_labels]
-
-        predicted_df=pd.DataFrame({'Questions':question_set,'Actual_Answers':class_actual_name,'Predicted_Answers':class_predicted_name})
-        predicted_df.to_csv('Validation_Stats.csv')
+        
+        print(class_predicted_name)
+        list_set=[]
+        for index,val in tqdm(enumerate(question_id)):
+            temp={"answer":class_predicted_name[index],"question_id":val}
+            list_set.append(temp)
+        with open('validation_results.json', 'w') as fout:
+            json.dump(list_set , fout)
+        #predicted_df=pd.DataFrame({'Questions':question_set,'Actual_Answers':class_actual_name,'Predicted_Answers':class_predicted_name})
+        #predicted_df.to_csv('Validation_Stats.csv')
         score = score / len(loader.dataset)
         V_loss /= len(loader.dataset)
         upper_bound = upper_bound / len(loader.dataset)
@@ -120,10 +136,10 @@ if __name__ == "__main__":
     parser.add_argument('--feats_data_path', type=str, default="/data/digbose92/VQA/COCO/train_hdf5_COCO/")
     parser.add_argument('--data_root', type=str, default="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources")
     parser.add_argument('--npy_file', type=str, default="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy")
-    parser.add_argument('--model_path', type=str, default="results_resnet_152_1000_CLASSES/model_resnet_152.pth")
+    parser.add_argument('--model_path', type=str, default="results_GRU_uni/results_rcnn_hid_1280_mfh_YES_NO_ADAM/model.pth")
     parser.add_argument('--image_model', type=str, default=None)
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--num_hid', type=int, default=1024) # they used 1024
+    parser.add_argument('--num_hid', type=int, default=1280) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
     parser.add_argument('--dropout_G', type=float, default=0.2)
@@ -135,9 +151,12 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=9731, help='random seed')
     parser.add_argument('--arch_choice', type=str, default='resnet152', help='choice of the network')
     parser.add_argument('--layer_option', type=str, default='pool', help='choice of the layer')
-    parser.add_argument('--num_workers', type=int, default=10, help='number of the workers')
+    parser.add_argument('--num_workers', type=int, default=4, help='number of the workers')
     parser.add_argument('--device', type=int, default=0, help='GPU device id')
     parser.add_argument('--class_metadata_file', type=str, default='/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/Train_Class_Distribution.csv', help='Path of class metadata file')
+    parser.add_argument('--rcnn_path',type=str,default="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl",help="Path of the rcnn features file")
+    parser.add_argument('--bert_option',type=bool,default=False,help="Whether to use bert or not")
+    parser.add_argument('--mfb_out_dim', type=int, default=1000, help='mfb output dimension')
     args = parser.parse_args()
     evaluate_attention_model(args)
     
