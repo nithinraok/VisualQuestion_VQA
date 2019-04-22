@@ -94,9 +94,10 @@ class Dataset_VQA(Dataset):
         if(self.bert_option is True):
             #load bert features from .hdf5 file 
             h5_path_bert=os.path.join(self.data_root,self.choice+'_bert_yes_no.hdf5')
-            print(h5_path_bert)
+            #print(h5_path_bert)
             hf_bert=h5py.File(h5_path_bert)
             self.bert_features=hf_bert.get('bert_embeddings')
+            print('Bert shape')
             print(self.bert_features.shape)
             print('Loading question ids')
             self.quest_ids=list(hf_bert.get('question_ids'))
@@ -162,15 +163,13 @@ class Dataset_VQA(Dataset):
         image_id=entry['image_id']
         question_sent=entry['question']
         question_id=entry['question_id']
+
+        #print(label)
         #print(type(question_sent))
         #sentence=Sentence(question_sent)
         #print('Here')
         #self.bert.embed(sentence)
         #print(sentence[0].embedding.shape)
-
-        
-
-
         if(self.rcnn_pkl_path is not None):
             if(image_id in self.pkl_data):
                 idx=self.pkl_data[image_id]
@@ -191,7 +190,7 @@ class Dataset_VQA(Dataset):
             index_question=self.quest_ids.index(question_id)
             quest_feats=torch.from_numpy(self.bert_features[index_question])
             quest_feats=quest_feats.float()
-            return(feat,quest_feats,question_sent,target)
+            return(feat,quest_feats,question_sent,question_id,target)
         else:
 
             return(feat,question,question_sent,question_id,target)

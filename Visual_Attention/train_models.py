@@ -48,7 +48,7 @@ def evaluate_model(model, valid_dataloader,device):
     #i, (feat, quest, label, target) 
     for data in tqdm(valid_dataloader):
 
-        feat, quest, label, target = data
+        feat, quest, quest_sent, quest_id, target= data
         feat = feat.to(device)
         quest = quest.to(device)
         target = target.to(device) # true labels
@@ -91,7 +91,7 @@ def single_batch_run(model,train_dataloader,valid_dataloader,device,output_folde
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval', action='store_true', help='set this to evaluate.')
-    parser.add_argument('--epochs', type=int, default=40)
+    parser.add_argument('--epochs', type=int, default=45)
     parser.add_argument('--num_hid', type=int, default=1280) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
@@ -104,10 +104,10 @@ def parse_args():
     parser.add_argument('--output', type=str, default='saved_models/')
     parser.add_argument('--batch_size', type=int, default=512)
     parser.add_argument('--weight_decay', type=float, default=0)
-    parser.add_argument('--optimizer', type=str, default='Adam', help='Adam, Adamax, Adadelta, RMSprop')
+    parser.add_argument('--optimizer', type=str, default='Adamax', help='Adam, Adamax, Adadelta, RMSprop')
     parser.add_argument('--initializer', type=str, default='kaiming_normal')
     parser.add_argument('--seed', type=int, default=9731, help='random seed')
-    parser.add_argument('--bert_option', type=bool, default=False, help='bert option')
+    parser.add_argument('--bert_option', type=bool, default=True, help='bert option')
     parser.add_argument('--mfb_out_dim', type=int, default=1000, help='mfb output dimension')
     args = parser.parse_args()
     return args
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     feats_data_path="/data/digbose92/VQA/COCO/train_hdf5_COCO/"
     data_root="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
     npy_file="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy"
-    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_uni/results_rcnn_hid_1280_mfh_classifier_YES_NO_ADAM"
+    output_folder="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_Attention/results_GRU_uni/results_rcnn_hid_1280_mfh_bert_yes_no_adam"
     train_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/train36_imgid2idx.pkl"
     valid_rcnn_pickle_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/val36_imgid2idx.pkl"
     seed = 0
@@ -147,15 +147,19 @@ if __name__ == '__main__':
     
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=12)
     val_loader=DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False, num_workers=12)
-    print(len(train_loader))
-    print(len(val_loader))
+    #data=(next(iter(train_loader)))
+    #feat, quest, quest_sent, quest_id, target = data
+    #print(quest.size())
+    #input()
+    #print(len(train_loader))
+    #print(len(val_loader))
     total_step=len(train_loader)
 
     #model related issues
     #model = attention_bert_baseline(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                #activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
                                #drop_W=args.dropout_W, drop_C=args.dropout_C)
-    model=attention_mfh_classifier(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
+    model=attention_bert_mfh_fusion(train_dataset, num_hid=args.num_hid, dropout= args.dropout, norm=args.norm,\
                                activation=args.activation, drop_L=args.dropout_L, drop_G=args.dropout_G,\
                                drop_W=args.dropout_W, drop_C=args.dropout_C,mfb_out_dim=args.mfb_out_dim)
     #model=model.to(device_select)
@@ -171,7 +175,7 @@ if __name__ == '__main__':
     elif args.initializer == 'kaiming_uniform':
         model.apply(weights_init_ku)
 
-    model.w_emb.init_embedding(npy_file)
+    #model.w_emb.init_embedding(npy_file)
     #if torch.cuda.device_count() > 1:
     print("Let's use", torch.cuda.device_count(), "GPUs!")
     model=torch.nn.DataParallel(model, device_ids=device_ids).to(device)
@@ -201,13 +205,15 @@ if __name__ == '__main__':
         correct = 0
         step=0
         start_time=time.time()
-        for i, (feat, quest, quest_sent, target) in enumerate(train_loader):
+        for i, (feat, quest, quest_sent, quest_id, target) in enumerate(train_loader):
 
             feat = feat.to(device)
             quest = quest.to(device)
             #print(type(quest))
             target = target.to(device) # true labels
-
+            #print(feat.size())
+            #print(quest.size())
+            
             pred = model(feat, quest, target)
             loss = instance_bce_with_logits(pred, target)
             #print(loss)
