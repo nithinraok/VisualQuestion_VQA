@@ -85,15 +85,18 @@ def model_regen(args):
                                drop_W=args.dropout_W, drop_C=args.dropout_C)
     attention_model.load_state_dict(new_state_dict)
     attention_model.eval()
+    
     #print('Saving the entire model')
     #torch.save(attention_model,'gradcam_models/resnet_152_attention_baseline_model.pth')
     return(attention_model)
 
 class VQA_Model_combined(nn.Module):
     def __init__(self,args):
+        torch.cuda.manual_seed_all(args.seed)
         super(VQA_Model_combined, self).__init__()
         model=models.resnet152(pretrained=True)
         self.img_model = nn.Sequential(*list(model.children())[:-2])
+        self.img_model.train(False)
         attention_model_checkpoint=torch.load(args.model_path)
         new_state_dict = OrderedDict()
         for k, v in attention_model_checkpoint.items():
@@ -111,6 +114,9 @@ class VQA_Model_combined(nn.Module):
                                drop_W=args.dropout_W, drop_C=args.dropout_C)
         attention_model.load_state_dict(new_state_dict)
         self.vqa_model=attention_model
+        self.vqa_model.train(False)
+        #self.attention_model.train(False)
+        
         #
         # 
         # 
@@ -176,10 +182,10 @@ if __name__ == "__main__":
     parser.add_argument('--feats_data_path', type=str, default="/data/digbose92/VQA/COCO/train_hdf5_COCO/")
     parser.add_argument('--data_root', type=str, default="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources")
     parser.add_argument('--npy_file', type=str, default="../../VisualQuestion_VQA/Visual_All/data/glove6b_init_300d.npy")
-    parser.add_argument('--model_path', type=str, default="results_GRU_uni/results_resnet_152_1000_CLASSES/model_resnet_152.pth")
+    parser.add_argument('--model_path', type=str, default="results_GRU_uni/results_resnet_152_hid_512_YES_NO_ADAM/model.pth")
     parser.add_argument('--image_model', type=str, default=None)
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--num_hid', type=int, default=1024) # they used 1024
+    parser.add_argument('--num_hid', type=int, default=512) # they used 1024
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--dropout_L', type=float, default=0.1)
     parser.add_argument('--dropout_G', type=float, default=0.2)
@@ -203,25 +209,26 @@ if __name__ == "__main__":
     
 
     VQA_model_exp=VQA_Model_combined(args)
-    VQA_model_exp.img_model.eval()
-    VQA_model_exp.vqa_model.eval()
-    print(type(VQA_model_exp))
+    VQA_model_exp.to(args.device)
+    #VQA_model_exp.img_model.eval()
+    #VQA_model_exp.vqa_model.eval()
+    #print(type(VQA_model_exp))
     #VQA_model_exp.eval()
     #VQA_model_exp.to(0)
     class_meta_data=pd.read_csv('/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/Train_Class_Distribution.csv')
     class_label_map=class_meta_data['Label_names'].tolist()
 
     print('Load the validation json file')
-    valid_questions=json.load(open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/v2_OpenEnded_mscoco_val2014_1000_questions.json'))['questions']
+    valid_questions=json.load(open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/v2_OpenEnded_mscoco_val2014_yes_no_questions.json'))['questions']
 
-    valid_entry=valid_questions[150]
+    valid_entry=valid_questions[77]
     dictionary=Dictionary.load_from_file('../Visual_All/data/dictionary.pkl')
     print(valid_entry['question'])
     tokens=preproc_question(valid_entry['question'],14,dictionary)
     print(tokens)
     #print(valid_entry)
     
-    pkl_data=pickle.load(open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/val_target_top_1000_ans.pkl','rb'))
+    pkl_data=pickle.load(open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/val_target_yes_no_ans.pkl','rb'))
     
     question_ids=[pkl_data[i]['question_id'] for i, question in enumerate(pkl_data)]
     #print(question_ids)
@@ -245,7 +252,8 @@ if __name__ == "__main__":
     tokens=tokens.unsqueeze(0)
     print(tokens.size())
     print(image_tensor.size())
-
+    image_tensor=image_tensor.to(args.device)
+    tokens=tokens.to(args.device)
     #image_tensor=image_tensor.to(0)
     #tokens=tokens.to(0)
     logit=VQA_model_exp(image_tensor,tokens)
@@ -257,7 +265,7 @@ if __name__ == "__main__":
     #print(pkl_data[id])
     #print(logits)
     #print(logit.size())
-    logit[:,logit_max_location].backward()
+    """logit[:,logit_max_location].backward()
     #one_hot_output = torch.FloatTensor(1, logits.size()[-1]).zero_()
     #one_hot_output[0][1] = 1
 
@@ -290,4 +298,4 @@ if __name__ == "__main__":
     #plt.show()
     #print(pooled_gradients.size())
     #print(activations.size())
-    #print(image_tensor.size())
+    #print(image_tensor.size())"""

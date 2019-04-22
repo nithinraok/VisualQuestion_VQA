@@ -22,6 +22,7 @@ import pandas as pd
 import h5py
 
 def load_model(args):
+    torch.cuda.manual_seed_all(args.seed)
     model_checkpoint=torch.load(args.model_path)
     new_state_dict = OrderedDict()
     for k, v in model_checkpoint.items():
@@ -47,7 +48,7 @@ def load_model(args):
                                #drop_W=args.dropout_W, drop_C=args.dropout_C,mfb_out_dim=args.mfb_out_dim)
     attention_model.load_state_dict(new_state_dict)
     attention_model.train(False)
-    torch.cuda.manual_seed_all(args.seed)
+    
     #torch.cuda.manual_seed(args.seed)
     torch.cuda.set_device(args.device)
     attention_model.to(args.device)
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     #model.eval()
     print('Load the validation json file')
     valid_questions=json.load(open('/proj/digbose92/VQA/VisualQuestion_VQA/common_resources/v2_OpenEnded_mscoco_val2014_yes_no_questions.json'))['questions']
-    valid_entry=valid_questions[0] 
+    valid_entry=valid_questions[91] 
     print(valid_entry)
     dictionary=Dictionary.load_from_file('../Visual_All/data/dictionary.pkl')
     print(valid_entry['question'])

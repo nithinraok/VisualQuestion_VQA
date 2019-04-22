@@ -35,7 +35,8 @@ def compute_score_with_logits(logits, labels):
     return scores, logits, class_labels
 
 def evaluate_attention_model(args):
-
+    #torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
     class_data=pd.read_csv(args.class_metadata_file)
     #class_label_map={0:"no",1:"yes"}
 
@@ -68,8 +69,7 @@ def evaluate_attention_model(args):
     attention_model.load_state_dict(new_state_dict)
     attention_model.eval()
 
-    torch.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)
+    
     #torch.cuda.manual_seed(args.seed)
     torch.cuda.set_device(args.device)
     attention_model.to(args.device)
