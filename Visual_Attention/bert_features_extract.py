@@ -29,7 +29,13 @@ def extract_bert_features(json_file,dataroot_folder,choice="yes_no",split="train
     h5f.close()
 
 if __name__ == "__main__":
+<<<<<<< Updated upstream
     json_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/v2_OpenEnded_mscoco_train2014_yes_no_questions.json"
     dataroot_folder="/data/digbose92/VQA/COCO/train_hdf5_COCO"
+=======
+    dataroot_folder="/home/nithin_rao/CSCI_599/VisualQuestion_VQA/"
+    json_file=dataroot_folder+"Visual_All/data/v2_OpenEnded_mscoco_train2014_yes_no_questions.json"
+#    json_file="/proj/digbose92/VQA/VisualQuestion_VQA/Visual_All/data/v2_OpenEnded_mscoco_val2014_yes_no_questions.json"
+#   dataroot_folder="/proj/digbose92/VQA/VisualQuestion_VQA/common_resources"
+>>>>>>> Stashed changes
     extract_bert_features(json_file,dataroot_folder)
-    
